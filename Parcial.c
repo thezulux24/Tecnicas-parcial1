@@ -3,6 +3,7 @@
 #include <time.h>
 #define ATRIBUTOS 5
 #define CARTAS 7
+
 int main() {
 
     srand(time(NULL));
@@ -28,10 +29,15 @@ int main() {
     int energia;
     int termino = 0;
     int seleccion;
+    int size = sizeof(int);
+    int *deckUsable  = (int*)malloc(0);
+    int tamanoDinamico;
+    int flag2 = 0;
 
     while (vidaJugador > 0 && vidaEnemigo > 0){
-        atack = 0, defense = 0, energia = 3;
+        atack = 0, defense = 0, energia = 3, tamanoDinamico = 5;
         ataqueEnemigo = rand() % 8 + 5 ;
+        deckUsable = (int*)realloc(deckUsable, tamanoDinamico * size);
         while (contar < 5) {
             numeroAleatorio = rand() % 8  ; 
             repetido = 0;
@@ -46,9 +52,12 @@ int main() {
             }
         }
         contar = 0;
+        for (int i = 0; i < tamanoDinamico; i++){
+            deckUsable[i]= deck[i];
+        }
 
         for (int i=0; i<5; i++){
-            opcion = deck[i];
+            opcion = deckUsable[i];
         switch(opcion) {
             case 1:
                 printf("-> Puedes elegir [1]Ataque\n AT= %d  EN= %d\n", cartas[0][0],cartas[0][3]);
@@ -89,20 +98,39 @@ int main() {
                 printf("\n ----------------- \n");
                 printf("turno finalizado\n");
             }
-            else if (energia > 0){
-                atack += cartas[seleccion-1][0];
-                defense += cartas[seleccion-1][1];
-                energia -= cartas[seleccion-1][3];
-                vidaJugador += cartas[seleccion-1][2];
-                energia += cartas[seleccion-1][4];
-                printf("ataque: %d defensa: %d\n", atack, defense);
-                printf("has generado %d dano a tu enemigo\n", atack);
-                vidaEnemigo -= atack;
-                atack = 0;
+            else{
+                for (int i = 0; i < tamanoDinamico ; i++){
+                    if (deckUsable[i] == seleccion ){
+                        flag2 = 1;            
+                    }
+                    if (flag2 == 1 && i != tamanoDinamico -1){
+                        deckUsable[i]= deckUsable[i+1];
+                    }
+                }
             }
-            else {
-                printf("no tienes energia suficiente\n");
+            if (flag2 == 1){
+                tamanoDinamico -= 1;
+                deckUsable = (int*)realloc(deckUsable, tamanoDinamico*size);
+                if (energia > 0){
+                    atack += cartas[seleccion-1][0];
+                    defense += cartas[seleccion-1][1];
+                    energia -= cartas[seleccion-1][3];
+                    vidaJugador += cartas[seleccion-1][2];
+                    energia += cartas[seleccion-1][4];
+                    printf("ataque: %d defensa: %d\n", atack, defense);
+                    printf("has generado %d dano a tu enemigo\n", atack);
+                    vidaEnemigo -= atack;
+                    atack = 0;
+                }
+                else {
+                    printf("no tienes energia suficiente\n");
+                }
             }
+            else{
+                printf("¡LA CARTA YA NO ESTÁ EN EL DECK!");
+                
+            }
+            flag2 = 0;
             
         }
 
