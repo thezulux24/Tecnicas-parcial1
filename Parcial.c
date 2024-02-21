@@ -31,9 +31,9 @@ int main() {
 
     while (vidaJugador > 0 && vidaEnemigo > 0){
         atack = 0, defense = 0, energia = 3;
-        ataqueEnemigo = rand() % 10;
+        ataqueEnemigo = rand() % 8 + 5 ;
         while (contar < 5) {
-            numeroAleatorio = rand() % 8 ; 
+            numeroAleatorio = rand() % 8  ; 
             repetido = 0;
             for (int i = 0; i < 5 && !repetido; i++) {
                 if (deck[i] == numeroAleatorio) {
@@ -73,13 +73,16 @@ int main() {
                 break;        
             }
         }
-        while (termino != 1){
+        while (termino != 1 ){
             printf("\n");
             printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
             printf("\n ----------------- \n");
+            printf("su vida es: %d\n", vidaJugador);
             printf("su energia es: %d\n", energia);
+            printf("La vida de su enemigo es:  %d\n", vidaEnemigo);
             printf("su enemigo le hara: %d dano\n", ataqueEnemigo);
             printf("----------------- \n");
+            
             scanf("%d", &seleccion);
             if (seleccion == 0 ){
                 termino = 1;
@@ -91,17 +94,18 @@ int main() {
                 defense += cartas[seleccion-1][1];
                 energia -= cartas[seleccion-1][3];
                 vidaJugador += cartas[seleccion-1][2];
+                energia += cartas[seleccion-1][4];
                 printf("ataque: %d defensa: %d\n", atack, defense);
                 printf("has generado %d dano a tu enemigo\n", atack);
                 vidaEnemigo -= atack;
                 atack = 0;
             }
-            else{
+            else {
                 printf("no tienes energia suficiente\n");
             }
-
             
         }
+
         
         if (ataqueEnemigo > defense){
             vidaJugador -= defense + ataqueEnemigo;
@@ -112,11 +116,7 @@ int main() {
         }
 
 
-        printf("tu vida es: %d\n", vidaJugador);
-        if (vidaEnemigo > 0){
-            printf("la vida del enemigo es: %d\n", vidaEnemigo);
-        }
-        else{
+        if (vidaEnemigo < 0){
             printf("HAS GANADO\n");
         }
         printf("\n ----------------- \n");
