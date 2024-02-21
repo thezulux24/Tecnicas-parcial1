@@ -56,7 +56,7 @@ int main() {
             deckUsable[i]= deck[i];
         }
 
-        for (int i=0; i<5; i++){
+        for (int i=0; i<tamanoDinamico; i++){
             opcion = deckUsable[i];
         switch(opcion) {
             case 1:
