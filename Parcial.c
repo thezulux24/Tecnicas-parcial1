@@ -4,6 +4,7 @@
 #define ATRIBUTOS 5
 #define CARTAS 7
 int main() {
+
     srand(time(NULL));
     int ataque[ATRIBUTOS] = {5,0,0,1,0};
     int defensa[ATRIBUTOS]= {0,5,0,1,0};
@@ -19,47 +20,65 @@ int main() {
     int contar = 0;
     int repetido ;
     int opcion;
-    while (contar < 5) {
-        numeroAleatorio = rand() % 8 ; 
-        repetido = 0;
-        for (int i = 0; i < 5 && !repetido; i++) {
-            if (deck[i] == numeroAleatorio) {
-                repetido = 1;
+    int vidaJugador = 50;
+    int vidaEnemigo = 50;
+    int atack;
+    int ataqueEnemigo;
+    int defense;
+    int termino = 0;
+    int seleccion;
+    while (vidaJugador > 0 || vidaEnemigo > 0){
+        atack = 0, ataqueEnemigo = 0, defense = 0;
+        while (contar < 5) {
+            numeroAleatorio = rand() % 8 ; 
+            repetido = 0;
+            for (int i = 0; i < 5 && !repetido; i++) {
+                if (deck[i] == numeroAleatorio) {
+                    repetido = 1;
+                }
+            }
+            if (!repetido) {
+                deck[contar] = numeroAleatorio;
+                contar++;
             }
         }
-        if (!repetido) {
-            deck[contar] = numeroAleatorio;
-            contar++;
-        }
-    }
+        contar = 0;
 
-    for (int i=0; i<5; i++){
-        opcion = deck[i];
-    switch(opcion) {
-        case 1:
-            printf("Puedes elegir Ataque\n AT= %d  EN= %d\n", cartas[0][0],cartas[0][3]);
-            break;
-        case 2:
-            printf("Puedes elegir Defensa\n DF= %d  EN= %d\n", cartas[1][1],cartas[1][3]);
-            break;
-        case 3:
-            printf("Puedes elegir Ultima sangre\n AT= %d  LF=%d  EN= %d\n", cartas[2][0],cartas[2][2],cartas[2][3]);
-            break;
-        case 4:
-            printf("Puedes elegir milagro\n ME=%d   EN=%d\n", cartas[3][4],cartas[3][3] );
-            break;
-        case 5:
-            printf("Puedes elegir resplandor\n AT= %d EN= %d\n", cartas[4][0],cartas[4][3]);
-            break;
-        case 6:
-            printf("Puedes elegir desvio\n DF= %d  EN= %d\n", cartas[5][1],cartas[5][3]);
-            break;
-        case 7:
-            printf("Puedes elegir rebote\n AT= %d DF= %d EN= %d\n", cartas[6][0], cartas[6][1],cartas[6][3]);
-            break;        
+        for (int i=0; i<5; i++){
+            opcion = deck[i];
+        switch(opcion) {
+            case 1:
+                printf("Puedes elegir [1]Ataque\n AT= %d  EN= %d\n", cartas[0][0],cartas[0][3]);
+                break;
+            case 2:
+                printf("Puedes elegir [2]Defensa\n DF= %d  EN= %d\n", cartas[1][1],cartas[1][3]);
+                break;
+            case 3:
+                printf("Puedes elegir [3]Ultima sangre\n AT= %d  LF=%d  EN= %d\n", cartas[2][0],cartas[2][2],cartas[2][3]);
+                break;
+            case 4:
+                printf("Puedes elegir [4]milagro\n ME=%d   EN=%d\n", cartas[3][4],cartas[3][3] );
+                break;
+            case 5:
+                printf("Puedes elegir [5]resplandor\n AT= %d EN= %d\n", cartas[4][0],cartas[4][3]);
+                break;
+            case 6:
+                printf("Puedes elegir [6]desvio\n DF= %d  EN= %d\n", cartas[5][1],cartas[5][3]);
+                break;
+            case 7:
+                printf("Puedes elegir [7]rebote\n AT= %d DF= %d EN= %d\n", cartas[6][0], cartas[6][1],cartas[6][3]);
+                break;        
+            }
         }
+        while (termino != 1){
+            printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno");
+            scanf("%d", &seleccion);
+            if (seleccion == 0 ){
+                termino = 1;
+            }
+        }
+        termino = 0;
     }
-    
 
     return 0;
 }
