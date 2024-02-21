@@ -28,8 +28,10 @@ int main() {
     int energia;
     int termino = 0;
     int seleccion;
-    while (vidaJugador > 0 || vidaEnemigo > 0){
-        atack = 0, ataqueEnemigo = 0, defense = 0, energia = 3;
+
+    while (vidaJugador > 0 && vidaEnemigo > 0){
+        atack = 0, defense = 0, energia = 3;
+        ataqueEnemigo = rand() % 10;
         while (contar < 5) {
             numeroAleatorio = rand() % 8 ; 
             repetido = 0;
@@ -49,44 +51,75 @@ int main() {
             opcion = deck[i];
         switch(opcion) {
             case 1:
-                printf("Puedes elegir [1]Ataque\n AT= %d  EN= %d\n", cartas[0][0],cartas[0][3]);
+                printf("-> Puedes elegir [1]Ataque\n AT= %d  EN= %d\n", cartas[0][0],cartas[0][3]);
                 break;
             case 2:
-                printf("Puedes elegir [2]Defensa\n DF= %d  EN= %d\n", cartas[1][1],cartas[1][3]);
+                printf("-> Puedes elegir [2]Defensa\n DF= %d  EN= %d\n", cartas[1][1],cartas[1][3]);
                 break;
             case 3:
-                printf("Puedes elegir [3]Ultima sangre\n AT= %d  LF=%d  EN= %d\n", cartas[2][0],cartas[2][2],cartas[2][3]);
+                printf("-> Puedes elegir [3]Ultima sangre\n AT= %d  LF=%d  EN= %d\n", cartas[2][0],cartas[2][2],cartas[2][3]);
                 break;
             case 4:
-                printf("Puedes elegir [4]milagro\n ME=%d   EN=%d\n", cartas[3][4],cartas[3][3] );
+                printf("-> Puedes elegir [4]milagro\n ME=%d   EN=%d\n", cartas[3][4],cartas[3][3] );
                 break;
             case 5:
-                printf("Puedes elegir [5]resplandor\n AT= %d EN= %d\n", cartas[4][0],cartas[4][3]);
+                printf("-> Puedes elegir [5]resplandor\n AT= %d EN= %d\n", cartas[4][0],cartas[4][3]);
                 break;
             case 6:
-                printf("Puedes elegir [6]desvio\n DF= %d  EN= %d\n", cartas[5][1],cartas[5][3]);
+                printf("-> Puedes elegir [6]desvio\n DF= %d  EN= %d\n", cartas[5][1],cartas[5][3]);
                 break;
             case 7:
-                printf("Puedes elegir [7]rebote\n AT= %d DF= %d EN= %d\n", cartas[6][0], cartas[6][1],cartas[6][3]);
+                printf("-> Puedes elegir [7]rebote\n AT= %d DF= %d EN= %d\n", cartas[6][0], cartas[6][1],cartas[6][3]);
                 break;        
             }
         }
         while (termino != 1){
-
+            printf("\n");
             printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
+            printf("\n ----------------- \n");
             printf("su energia es: %d\n", energia);
+            printf("su enemigo le hara: %d dano\n", ataqueEnemigo);
+            printf("----------------- \n");
             scanf("%d", &seleccion);
             if (seleccion == 0 ){
                 termino = 1;
+                printf("\n ----------------- \n");
+                printf("turno finalizado\n");
             }
-            else{
+            else if (energia > 0){
                 atack += cartas[seleccion-1][0];
                 defense += cartas[seleccion-1][1];
                 energia -= cartas[seleccion-1][3];
                 vidaJugador += cartas[seleccion-1][2];
+                printf("ataque: %d defensa: %d\n", atack, defense);
+                printf("has generado %d dano a tu enemigo\n", atack);
+                vidaEnemigo -= atack;
+                atack = 0;
             }
-            printf("ataque: %d defensa: %d\n", atack, defense);
+            else{
+                printf("no tienes energia suficiente\n");
+            }
+
+            
         }
+        
+        if (ataqueEnemigo > defense){
+            vidaJugador -= defense + ataqueEnemigo;
+            printf("el enemigo ha generado %d dano\n", ataqueEnemigo-defense);
+        }
+        else{
+            printf("has bloqueado el ataque\n");
+        }
+
+
+        printf("tu vida es: %d\n", vidaJugador);
+        if (vidaEnemigo > 0){
+            printf("la vida del enemigo es: %d\n", vidaEnemigo);
+        }
+        else{
+            printf("HAS GANADO\n");
+        }
+        printf("\n ----------------- \n");
         termino = 0;
     }
 
