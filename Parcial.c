@@ -25,10 +25,11 @@ int main() {
     int atack;
     int ataqueEnemigo;
     int defense;
+    int energia;
     int termino = 0;
     int seleccion;
     while (vidaJugador > 0 || vidaEnemigo > 0){
-        atack = 0, ataqueEnemigo = 0, defense = 0;
+        atack = 0, ataqueEnemigo = 0, defense = 0, energia = 3;
         while (contar < 5) {
             numeroAleatorio = rand() % 8 ; 
             repetido = 0;
@@ -71,11 +72,20 @@ int main() {
             }
         }
         while (termino != 1){
-            printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno");
+
+            printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
+            printf("su energia es: %d\n", energia);
             scanf("%d", &seleccion);
             if (seleccion == 0 ){
                 termino = 1;
             }
+            else{
+                atack += cartas[seleccion-1][0];
+                defense += cartas[seleccion-1][1];
+                energia -= cartas[seleccion-1][3];
+                vidaJugador += cartas[seleccion-1][2];
+            }
+            printf("ataque: %d defensa: %d\n", atack, defense);
         }
         termino = 0;
     }
