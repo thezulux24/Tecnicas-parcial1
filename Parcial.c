@@ -127,7 +127,7 @@ int main() {
                 }
             }
             else{
-                printf("¡LA CARTA YA NO ESTÁ EN EL DECK!");
+                printf("¡LA CARTA YA NO ESTA EN EL DECK!");
                 
             }
             flag2 = 0;
