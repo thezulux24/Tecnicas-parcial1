@@ -44,7 +44,7 @@ int main() {
         ataqueEnemigo = rand() % 8 + 5 ;
         deckUsable = (int*)realloc(deckUsable, tamanoDinamico * size);
         while (contar < 5) {
-            numeroAleatorio = rand() % 8  ; 
+            numeroAleatorio = rand() % 7 + 1  ; 
             repetido = 0;
             for (int i = 0; i < 5 && !repetido; i++) {
                 if (deck[i] == numeroAleatorio) {
@@ -73,28 +73,28 @@ int main() {
             for (int i=0; i<tamanoDinamico; i++){
             opcion = deckUsable[i];
             switch(opcion) {
-                case 1:
-                    printf("-> Puedes elegir [1]Ataque\n AT= %d  EN= %d\n", cartas[0][0],cartas[0][3]);
-                    break;
-                case 2:
-                    printf("-> Puedes elegir [2]Defensa\n DF= %d  EN= %d\n", cartas[1][1],cartas[1][3]);
-                    break;
-                case 3:
-                    printf("-> Puedes elegir [3]Ultima sangre\n AT= %d  LF=%d  EN= %d\n", cartas[2][0],cartas[2][2],cartas[2][3]);
-                    break;
-                case 4:
-                    printf("-> Puedes elegir [4]milagro\n ME=%d   EN=%d\n", cartas[3][4],cartas[3][3] );
-                    break;
-                case 5:
-                    printf("-> Puedes elegir [5]resplandor\n AT= %d EN= %d\n", cartas[4][0],cartas[4][3]);
-                    break;
-                case 6:
-                    printf("-> Puedes elegir [6]desvio\n DF= %d  EN= %d\n", cartas[5][1],cartas[5][3]);
-                    break;
-                case 7:
-                    printf("-> Puedes elegir [7]rebote\n AT= %d DF= %d EN= %d\n", cartas[6][0], cartas[6][1],cartas[6][3]);
-                    break;        
-                }
+            case 1:
+                printf("-> Seleccione [1] para elegir Ataque\n AT= %d  EN= %d\n", cartas[0][0],cartas[0][3]);
+                break;
+            case 2:
+                printf("->Seleccione [2] para elegir Defensa\n DF= %d  EN= %d\n", cartas[1][1],cartas[1][3]);
+                break;
+            case 3:
+                printf("-> Seleccione [3] para elegir Ultima sangre\n AT= %d  LF=%d  EN= %d\n", cartas[2][0],cartas[2][2],cartas[2][3]);
+                break;
+            case 4:
+                printf("-> Seleccione [4] para elegir Milagro\n ME=%d   EN=%d\n", cartas[3][4],cartas[3][3] );
+                break;
+            case 5:
+                printf("-> Seleccione [5] para elegir Resplandor\n AT= %d EN= %d\n", cartas[4][0],cartas[4][3]);
+                break;
+            case 6:
+                printf("-> Seleccione [6] para elegir Desvio\n DF= %d  EN= %d\n", cartas[5][1],cartas[5][3]);
+                break;
+            case 7:
+                printf("-> Seleccione [7] para elegir Rebote\n AT= %d DF= %d EN= %d\n", cartas[6][0], cartas[6][1],cartas[6][3]);
+                break;        
+            }
             }
             printf("\n");
             printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
