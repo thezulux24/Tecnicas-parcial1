@@ -112,7 +112,7 @@ int main() {
                 if (flag2 == 1){
                     tamanoDinamico -= 1;
                     deckUsable = (int*)realloc(deckUsable, tamanoDinamico*size);
-                    if (energia > 0){
+                    if (energia - cartas[seleccion-1][3] >= 0){
                         atack += cartas[seleccion-1][0];
                         defense += cartas[seleccion-1][1];
                         energia -= cartas[seleccion-1][3];
