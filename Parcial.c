@@ -3,9 +3,13 @@
 #include <time.h>
 #define ATRIBUTOS 5
 #define CARTAS 7
-
+/*
+INTEGRANTES:
+JHON DEIBY MEJIAS
+BRAYAN DAVID ZULUAGA
+RICARDO PEREZ
+*/
 int main() {
-
     srand(time(NULL));
     int ataque[ATRIBUTOS] = {5,0,0,1,0};
     int defensa[ATRIBUTOS]= {0,5,0,1,0};
@@ -39,7 +43,7 @@ int main() {
     size_t tamano = 0;
     printf("ingresa tu nombre: ");
     getline(&nombre, &tamano, stdin);
-    printf("Recuerde que, AT=Ataque, DF=Defensa y EN=Costo de energia");
+    printf("Recuerde que, AT=Ataque, DF=Defensa, EN=Costo de energia, LF= Efecto en vida y ME=suma energia\n");
     while (vidaJugador > 0 && vidaEnemigo > 0){
         atack = 0, defense = 0, energia = 3, tamanoDinamico = 5;
         ataqueEnemigo = rand() % 8 + 5 ;
@@ -118,8 +122,6 @@ int main() {
 	                        if (flag2 == 1 && i != tamanoDinamico -1){
 	                            deckUsable[i] = deckUsable[i+1];
 	                        }
-	                    
-	                    
 	                }
 	                if (flag2 == 1){
 	                    tamanoDinamico -= 1;
