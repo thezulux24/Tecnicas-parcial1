@@ -104,37 +104,37 @@ int main() {
                         flag2 = 1;            
                     }
                     if (flag2 == 1 && i != tamanoDinamico -1){
-                        deckUsable[i]= deckUsable[i+1];
+                        deckUsable[i] = deckUsable[i+1];
+                    }
+
+                    
+                }
+                if (flag2 == 1){
+                    tamanoDinamico -= 1;
+                    deckUsable = (int*)realloc(deckUsable, tamanoDinamico*size);
+                    if (energia > 0){
+                        atack += cartas[seleccion-1][0];
+                        defense += cartas[seleccion-1][1];
+                        energia -= cartas[seleccion-1][3];
+                        vidaJugador += cartas[seleccion-1][2];
+                        energia += cartas[seleccion-1][4];
+                        printf("ataque: %d defensa: %d\n", atack, defense);
+                        printf("has generado %d dano a tu enemigo\n", atack);
+                        vidaEnemigo -= atack;
+                        atack = 0;
+                    }
+                    else {
+                        printf("¡NO TIENES ENERGIA SUFICIENTE!\n");
                     }
                 }
-            }
-            if (flag2 == 1){
-                tamanoDinamico -= 1;
-                deckUsable = (int*)realloc(deckUsable, tamanoDinamico*size);
-                if (energia > 0){
-                    atack += cartas[seleccion-1][0];
-                    defense += cartas[seleccion-1][1];
-                    energia -= cartas[seleccion-1][3];
-                    vidaJugador += cartas[seleccion-1][2];
-                    energia += cartas[seleccion-1][4];
-                    printf("ataque: %d defensa: %d\n", atack, defense);
-                    printf("has generado %d dano a tu enemigo\n", atack);
-                    vidaEnemigo -= atack;
-                    atack = 0;
+                else if (flag2 == 0){
+                    printf("¡LA CARTA YA NO ESTA EN EL DECK!\n");
+                    
                 }
-                else {
-                    printf("no tienes energia suficiente\n");
-                }
-            }
-            else{
-                printf("¡LA CARTA YA NO ESTA EN EL DECK!\n");
+                flag2 = 0;
                 
             }
-            flag2 = 0;
-            
         }
-
-        
         if (ataqueEnemigo > defense){
             vidaJugador -= defense + ataqueEnemigo;
             printf("el enemigo ha generado %d dano\n", ataqueEnemigo-defense);
