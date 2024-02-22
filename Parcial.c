@@ -22,7 +22,9 @@ int main() {
     int repetido ;
     int opcion;
     int vidaJugador = 50;
+    int vidaJugador2 = 50;
     int vidaEnemigo = 50;
+    int vidaEnemigo2 = 50;
     int atack;
     int ataqueEnemigo;
     int defense;
@@ -33,7 +35,10 @@ int main() {
     int *deckUsable  = (int*)malloc(0);
     int tamanoDinamico;
     int flag2 = 0;
-
+    char *nombre= NULL; ;
+    size_t tamano = 0;
+    printf("ingresa tu nombre");
+    getline(&nombre, &tamano, stdin);
     while (vidaJugador > 0 && vidaEnemigo > 0){
         atack = 0, defense = 0, energia = 3, tamanoDinamico = 5;
         ataqueEnemigo = rand() % 8 + 5 ;
@@ -86,9 +91,10 @@ int main() {
             printf("\n");
             printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
             printf("\n ----------------- \n");
-            printf("su vida es: %d\n", vidaJugador);
+            printf("");
+            printf("Hola, %s , tú vida es: %d/%d\n", nombre, vidaJugador, vidaJugador2);
             printf("su energia es: %d\n", energia);
-            printf("La vida de su enemigo es:  %d\n", vidaEnemigo);
+            printf("Su enemigo se llama Kratos, su vida es: %d/%d\n", vidaEnemigo, vidaEnemigo2);
             printf("su enemigo le hara: %d dano\n", ataqueEnemigo);
             printf("----------------- \n");
             
