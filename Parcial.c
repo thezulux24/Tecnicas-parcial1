@@ -1,24 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#define ATRIBUTOS 5
 #define CARTAS 7
-/*
-INTEGRANTES:
-JHON DEIBY MEJIAS
-BRAYAN DAVID ZULUAGA
-RICARDO PEREZ
-*/
+
+typedef struct Carta {
+    char* nombre;
+    int ataque;
+    int defensa;
+    int vida;
+    int energia;
+} Carta;
+
 int main() {
     srand(time(NULL));
-    int ataque[ATRIBUTOS] = {5,0,0,1,0};
-    int defensa[ATRIBUTOS]= {0,5,0,1,0};
-    int ultimaSangre[ATRIBUTOS]= {12,0,-5,1,0};
-    int milagro[ATRIBUTOS]= {0,0,0,0,1};
-    int resplandor[ATRIBUTOS]= {15,0,0,2,0};
-    int desvio[ATRIBUTOS]= {0,12,0,2,0};
-    int rebote[ATRIBUTOS]= {5,5,0,1,0};
-    int *cartas[CARTAS] = {ataque,defensa,ultimaSangre,milagro,resplandor,desvio,rebote};
+
+    Carta ataque = {"Ataque", 5, 0, 0, -1};
+    Carta defensa = {"Defensa", 0, 5, 0, -1};
+    Carta ultimaSangre = {"Ultima Sangre", 12, 0, -5, -1};
+    Carta milagro = {"Milagro", 0, 0, 0, 1};
+    Carta resplandor = {"Resplandor", 15, 0, 0, -2};
+    Carta desvio = {"Desvio", 0, 12, 0, -2};
+    Carta rebote = {"Rebote", 5, 5, 0, -1};
+
+    Carta *cartas[CARTAS] = {&ataque, &defensa, &ultimaSangre, &milagro, &resplandor, &desvio, &rebote};
+
     int deck[5] = {0}; 
     int flag = 0;
     int numeroAleatorio;
@@ -36,8 +41,8 @@ int main() {
     int termino = 0;
     int seleccion;
     int size = sizeof(int);
-    int *deckUsable  = (int*)malloc(0);
-    int tamanoDinamico;
+    int *deckUsable  = (int*)malloc(5 * sizeof(int));
+    int tamanoDinamico = 5;
     int flag2 = 0;
     char *nombre= NULL; ;
     size_t tamano = 0;
@@ -45,9 +50,8 @@ int main() {
     getline(&nombre, &tamano, stdin);
     printf("Recuerde que, AT=Ataque, DF=Defensa, EN=Costo de energia, LF= Efecto en vida y ME=suma energia\n");
     while (vidaJugador > 0 && vidaEnemigo > 0){
-        atack = 0, defense = 0, energia = 3, tamanoDinamico = 5;
+        atack = 0, defense = 0, energia = 3;
         ataqueEnemigo = rand() % 8 + 5 ;
-        deckUsable = (int*)realloc(deckUsable, tamanoDinamico * size);
         while (contar < 5) {
             numeroAleatorio = rand() % 7 + 1  ; 
             repetido = 0;
@@ -69,7 +73,7 @@ int main() {
         
         while (termino != 1 ){
 			
-			if (vidaEnemigo>0){
+		if (vidaEnemigo>0){
 			
 	            printf("Hola, %s tú vida es: %d/%d\n", nombre, vidaJugador, vidaJugador2);
 	            printf("su energia es: %d\n", energia);
@@ -78,30 +82,8 @@ int main() {
 	            printf("----------------- \n");
 	            printf("\n Las cartas disponibles son: \n");
 	            for (int i=0; i<tamanoDinamico; i++){
-	            opcion = deckUsable[i];
-	            switch(opcion) {
-	            case 1:
-	                printf("-> Seleccione [1] para elegir Ataque\n AT= %d  EN= %d\n", cartas[0][0],cartas[0][3]);
-	                break;
-	            case 2:
-	                printf("->Seleccione [2] para elegir Defensa\n DF= %d  EN= %d\n", cartas[1][1],cartas[1][3]);
-	                break;
-	            case 3:
-	                printf("-> Seleccione [3] para elegir Ultima sangre\n AT= %d  LF=%d  EN= %d\n", cartas[2][0],cartas[2][2],cartas[2][3]);
-	                break;
-	            case 4:
-	                printf("-> Seleccione [4] para elegir Milagro\n ME=%d   EN=%d\n", cartas[3][4],cartas[3][3] );
-	                break;
-	            case 5:
-	                printf("-> Seleccione [5] para elegir Resplandor\n AT= %d EN= %d\n", cartas[4][0],cartas[4][3]);
-	                break;
-	            case 6:
-	                printf("-> Seleccione [6] para elegir Desvio\n DF= %d  EN= %d\n", cartas[5][1],cartas[5][3]);
-	                break;
-	            case 7:
-	                printf("-> Seleccione [7] para elegir Rebote\n AT= %d DF= %d EN= %d\n", cartas[6][0], cartas[6][1],cartas[6][3]);
-	                break;        
-	            }
+	                opcion = deckUsable[i];
+	                printf("-> Seleccione [%d] para elegir %s\n AT= %d DF= %d LF= %d EN= %d\n", opcion, cartas[opcion-1]->nombre, cartas[opcion-1]->ataque, cartas[opcion-1]->defensa, cartas[opcion-1]->vida, cartas[opcion-1]->energia);
 	            }
 	            printf("\n");
 	            printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
@@ -114,7 +96,7 @@ int main() {
 	                    printf("\n ----------------- \n");
 	                    printf("turno finalizado\n");
 	                }
-	                else if (energia - cartas[seleccion-1][3] >= 0){
+	                else if (energia - cartas[seleccion-1]->energia >= 0){
 	                    for (int i = 0; i < tamanoDinamico ; i++){
 	                        if (deckUsable[i] == seleccion ){
 	                            flag2 = 1;            
@@ -127,11 +109,10 @@ int main() {
 	                    tamanoDinamico -= 1;
 	                    deckUsable = (int*)realloc(deckUsable, tamanoDinamico*size);
 	                    
-	                        atack += cartas[seleccion-1][0];
-	                        defense += cartas[seleccion-1][1];
-	                        energia -= cartas[seleccion-1][3];
-	                        vidaJugador += cartas[seleccion-1][2];
-	                        energia += cartas[seleccion-1][4];
+	                        atack += cartas[seleccion-1]->ataque;
+	                        defense += cartas[seleccion-1]->defensa;
+	                        energia -= cartas[seleccion-1]->energia;
+	                        vidaJugador += cartas[seleccion-1]->vida;
 	                        printf("ataque: %d defensa: %d\n", atack, defense);
 	                    if (vidaEnemigo>0){
 	                        printf("has generado %d dano a tu enemigo\n", atack);
