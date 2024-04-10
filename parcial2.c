@@ -5,6 +5,7 @@
 #define NUM_CARTAS 14
 #define MANO_JUGADOR 5
 #define INICIAL_DECK 7
+#include <string.h>
 
 // Estructura para representar una carta
 typedef struct Carta {
@@ -29,10 +30,18 @@ typedef struct ListaEnlazada {
 
 // Estructura para representar un personaje o un enemigo
 typedef struct Personaje {
-    char* nombre;
+    char nombre[100];
     int vida_actual;
     int vida_total;
 } Personaje;
+
+typedef struct Jugador {
+    Personaje personaje;
+} Jugador;
+
+typedef struct Enemigo {
+    Personaje personaje;
+} Enemigo;
 
 // Estructura para representar una pila
 typedef struct Pila {
@@ -64,13 +73,26 @@ int main() {
             {"Rebote", 5, 5, 0, -1},
             {"Furia", 8, 3, 0, -2},
             {"Escudo Divino", 0, 10, 0, -2},
-            {"Bendición", 0, 0, 15, -3},
+            {"Bendición", 0, 5, 10, -3},
             {"Contraataque", 6, 0, 0, -2},
             {"Curación", 0, 0, 20, -3},
             {"Fuego Sagrado", 10, 0, 0, -3},
             {"Meditación", 0, 0, 0, 3}
 
     };
+
+    Jugador jugador;
+    Enemigo enemigo;
+
+    // Definir nombre del jugador
+    printf("Ingresa el nombre del jugador: ");
+    fgets(jugador.personaje.nombre, sizeof(jugador.personaje.nombre), stdin);
+
+    strcpy(enemigo.personaje.nombre, "Kratos"); // ya que no se puede declarar con "="
+    jugador.personaje.vida_actual = 50;
+    jugador.personaje.vida_total = 50;
+    enemigo.personaje.vida_actual = 50;
+    enemigo.personaje.vida_total = 50;
 
 
     // Crear el deck general con las cartas iniciales
@@ -86,7 +108,7 @@ int main() {
     // Barajar el deck general y colocarlo en la pila de robo
 
     barajarListaYApilar(deck_general, pila_robo );
-    
+
     printf("\n");
 
 
@@ -94,12 +116,8 @@ int main() {
     imprimirListaCartas(deck_general);
 
 
-
-
-
-
     // Inicializar la pila de descarte
-    Pila* pila_descarte = inicializarPila(NUM_CARTAS);
+    ListaEnlazada * pila_descarte = inicializarPila(NUM_CARTAS);
 
 
 
@@ -107,7 +125,6 @@ int main() {
     free(deck_general);
     free(pila_robo->cartas);
     free(pila_robo);
-    free(pila_descarte->cartas);
     free(pila_descarte);
 
     return 0;
