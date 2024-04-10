@@ -61,6 +61,11 @@ void barajarListaYApilar(ListaEnlazada* lista, Pila* pila_robo);
 Carta seleccionarCartaAleatoria(Carta* cartas_disponibles);
 void seleccionarCartasDeck (Carta* cartas_disponibles, ListaEnlazada* deck_general, int num_cartas_inicial);
 void imprimirListaCartas(ListaEnlazada* lista);
+void robarCartas(Pila* pila_robo, ListaEnlazada* mano);
+void imprimirPila(Pila* pila);
+
+
+
 int main() {
     // Definir todas las cartas disponibles en el juego
     Carta cartas_disponibles[NUM_CARTAS] = {
@@ -107,19 +112,30 @@ int main() {
     Pila* pila_robo = inicializarPila(NUM_CARTAS);
     // Barajar el deck general y colocarlo en la pila de robo
 
-    barajarListaYApilar(deck_general, pila_robo );
+    barajarListaYApilar(deck_general, pila_robo);
 
     printf("\n");
 
-
     printf("Deck General Barajado:\n");
+
     imprimirListaCartas(deck_general);
 
+    printf("\n");
 
-    // Inicializar la pila de descarte
+    printf("Pila de robado:\n");
+
+    imprimirPila(pila_robo);
+
     ListaEnlazada * pila_descarte = inicializarPila(NUM_CARTAS);
+    ListaEnlazada * mano = crearListaEnlazada();
+
+    void robarCartas(Pila* pila_robo, ListaEnlazada* mano);
 
 
+
+    printf("Mano:\n");
+
+    imprimirListaCartas(mano);
 
     // Liberar memoria
     free(deck_general);
@@ -200,11 +216,6 @@ void barajarListaYApilar(ListaEnlazada* lista, Pila* pila_robo) {
     // Obtener la longitud de la lista
     int longitud = lista->longitud;
 
-    // Si la lista tiene menos de 2 elementos, no hay necesidad de barajar
-    if (longitud < 2) {
-        return;
-    }
-
     // Convertir la lista enlazada a un array de punteros a nodo
     Nodo** nodos = (Nodo**)malloc(longitud * sizeof(Nodo*));
     Nodo* actual = lista->cabeza;
@@ -239,6 +250,7 @@ void barajarListaYApilar(ListaEnlazada* lista, Pila* pila_robo) {
     free(nodos);
 }
 
+
 // Función para imprimir el contenido de una lista enlazada de cartas
 void imprimirListaCartas(ListaEnlazada* lista) {
     Nodo* actual = lista->cabeza;
@@ -271,6 +283,37 @@ void seleccionarCartasDeck(Carta* cartas_disponibles, ListaEnlazada* deck_genera
             agregarAlFinal(deck_general, cartas_disponibles[indice_carta]); // Agregar la carta al deck general
             cartas_seleccionadas[indice_carta] = 1; // Marcar la carta como seleccionada
             cartas_seleccionadas_count++;
+        }
+    }
+}
+
+void robarCartas(Pila* pila_robo, ListaEnlazada* mano) {
+    // Vaciar la mano actual (limpiar la lista enlazada)
+    while (mano->cabeza != NULL) {
+        Nodo* temp = mano->cabeza;
+        mano->cabeza = mano->cabeza->siguiente;
+        free(temp);
+    }
+    mano->longitud = 0;
+
+    // Desapilar hasta 5 cartas de la pila de robo y agregarlas a la mano
+    for (int i = 0; i < 5 && pila_robo->tope >= 0; i++) {
+        Carta carta = desapilar(pila_robo);
+        agregarAlFinal(mano, carta);
+    }
+}
+
+
+void imprimirPila(Pila* pila) {
+    if (pila->tope == -1) {
+        printf("La pila está vacía.\n");
+    } else {
+        printf("Contenido de la pila:\n");
+        for (int i = pila->tope; i >= 0; i--) {
+            printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n",
+                   pila->cartas[i].nombre, pila->cartas[i].ataque,
+                   pila->cartas[i].defensa, pila->cartas[i].vida,
+                   pila->cartas[i].energia);
         }
     }
 }
