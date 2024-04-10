@@ -62,7 +62,7 @@ void seleccionarCartasDeck (Carta* cartas_disponibles, ListaEnlazada* deck_gener
 void imprimirListaCartas(ListaEnlazada* lista);
 void robarCartas(Pila* pila_robo, ListaEnlazada* mano);
 void imprimirPila(Pila* pila);
-
+Carta* seleccionarTresCartasAleatorias(Carta* cartas_disponibles, ListaEnlazada* deck_general);
 
 
 int main() {
@@ -97,7 +97,7 @@ int main() {
     strcpy(enemigo.personaje.nombre, "Kratos"); // ya que no se puede declarar con "="
     jugador.personaje.vida_actual = 50;
     jugador.personaje.vida_total = 50;
-    enemigo.personaje.vida_actual = 50;
+    enemigo.personaje.vida_actual = 0;
     enemigo.personaje.vida_total = 50;
 
 
@@ -146,8 +146,17 @@ int main() {
         }
         if (enemigo.personaje.vida_actual <= 0){
 
-            printf("HAS PERDIDO\n");
+            printf("HAS  GANADO, SELECIONA UNA DE LAS 3 CARTAS\n");
             // Aqui deberia existir una funcion para que escoga una de las 3 cartas aleatroias
+            Carta* cartas3 = seleccionarTresCartasAleatorias(cartas_disponibles, deck_general);
+
+            // Imprimir las cartas seleccionadas
+            printf("Cartas seleccionadas:\n");
+            for (int i = 0; i < 3; i++) {
+                printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n", cartas3[i].nombre,
+                       cartas3[i].ataque, cartas3[i].defensa,
+                       cartas3[i].vida, cartas3[i].energia);
+            }
             jugar = 0;
 
         }
@@ -329,4 +338,42 @@ void imprimirPila(Pila* pila) {
                    pila->cartas[i].energia);
         }
     }
+}
+
+Carta* seleccionarTresCartasAleatorias(Carta* cartas_disponibles, ListaEnlazada* deck_general) {
+    // Inicializar un array estático para almacenar las tres cartas seleccionadas
+    static Carta cartas_seleccionadas[3];
+
+    // Obtener una lista de los nombres de las cartas en el deck general
+    char* nombres_en_deck[deck_general->longitud];
+    Nodo* actual = deck_general->cabeza;
+    int i = 0;
+    while (actual != NULL) {
+        nombres_en_deck[i] = actual->carta.nombre;
+        actual = actual->siguiente;
+        i++;
+    }
+
+    // Semilla para la generación de números aleatorios
+    srand(time(NULL));
+
+    // Seleccionar tres cartas aleatorias que no estén en el deck general
+    int cartas_seleccionadas_count = 0;
+    for (int k = 0; k < NUM_CARTAS && cartas_seleccionadas_count < 3; k++) {
+        // Verificar si el nombre de la carta está en el deck general
+        int encontrado = 0;
+        for (int j = 0; j < deck_general->longitud && encontrado == 0; j++) {
+            if (strcmp(cartas_disponibles[k].nombre, nombres_en_deck[j]) == 0) {
+                encontrado = 1;
+            }
+        }
+        // Si no se encuentra en el deck general, se agrega a las cartas seleccionadas
+        if (!encontrado) {
+            cartas_seleccionadas[cartas_seleccionadas_count] = cartas_disponibles[k];
+            cartas_seleccionadas_count++;
+        }
+    }
+
+    // Devolver el array de cartas seleccionadas
+    return cartas_seleccionadas;
 }
