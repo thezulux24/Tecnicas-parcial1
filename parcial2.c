@@ -63,7 +63,7 @@ void imprimirListaCartas(ListaEnlazada* lista);
 void robarCartas(Pila* pila_robo, ListaEnlazada* mano);
 void imprimirPila(Pila* pila);
 Carta* seleccionarTresCartasAleatorias(Carta* cartas_disponibles, ListaEnlazada* deck_general);
-
+Carta obtenerCartaEnIndice(ListaEnlazada* lista, int indice);
 
 int main() {
     int jugar = 1; //booleano para jugar
@@ -97,7 +97,7 @@ int main() {
     strcpy(enemigo.personaje.nombre, "Kratos"); // ya que no se puede declarar con "="
     jugador.personaje.vida_actual = 50;
     jugador.personaje.vida_total = 50;
-    enemigo.personaje.vida_actual = 0;
+    enemigo.personaje.vida_actual = 50;
     enemigo.personaje.vida_total = 50;
 
 
@@ -147,11 +147,9 @@ int main() {
         if (enemigo.personaje.vida_actual <= 0){
 
             printf("HAS  GANADO, SELECIONA UNA DE LAS 3 CARTAS\n");
-            // Aqui deberia existir una funcion para que escoga una de las 3 cartas aleatroias
             Carta* cartas3 = seleccionarTresCartasAleatorias(cartas_disponibles, deck_general);
-
             // Imprimir las cartas seleccionadas
-            printf("Cartas seleccionadas:\n");
+            printf("Cartas a seleccionar:\n");
             for (int i = 0; i < 3; i++) {
                 printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n", cartas3[i].nombre,
                        cartas3[i].ataque, cartas3[i].defensa,
@@ -377,3 +375,32 @@ Carta* seleccionarTresCartasAleatorias(Carta* cartas_disponibles, ListaEnlazada*
     // Devolver el array de cartas seleccionadas
     return cartas_seleccionadas;
 }
+
+Carta obtenerCartaEnIndice(ListaEnlazada* lista, int indice) {
+    Carta carta;
+    int bool = 0;
+    // Verificar si la lista está vacía o el índice es negativo
+    if (lista == NULL || lista->cabeza == NULL || indice < 0) {
+        // Manejar el caso de una lista vacía o un índice inválido
+        bool = 1;
+    }
+    if (bool == 0) {
+        Nodo *actual = lista->cabeza;
+        int contador = 0;
+
+        // Avanzar hasta el nodo en el índice dado
+        while (actual != NULL && contador < indice) {
+            actual = actual->siguiente;
+            contador++;
+        }
+
+        if (actual != NULL) {
+            carta = actual->carta;
+        }
+        else{
+            printf("fuera de rango\n");
+        }
+    }
+    return  carta;
+    }
+
