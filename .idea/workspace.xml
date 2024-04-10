@@ -11,7 +11,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4504ecfb-2d29-4975-9d8b-90cb315e715e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/parcial2.exe" beforeDir="false" afterPath="$PROJECT_DIR$/parcial2.exe" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,7 +75,7 @@
       <option name="presentableId" value="Default" />
       <updated>1708607462710</updated>
       <workItem from="1708607464384" duration="5000" />
-      <workItem from="1712714807056" duration="5185000" />
+      <workItem from="1712714807056" duration="5313000" />
     </task>
     <servers />
   </component>
