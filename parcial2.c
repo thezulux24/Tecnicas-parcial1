@@ -126,10 +126,11 @@ int main() {
 
     imprimirPila(pila_robo);
 
+
     ListaEnlazada * pila_descarte = inicializarPila(NUM_CARTAS);
     ListaEnlazada * mano = crearListaEnlazada();
 
-    void robarCartas(Pila* pila_robo, ListaEnlazada* mano);
+    robarCartas(pila_robo, mano);
 
 
 
@@ -137,6 +138,13 @@ int main() {
 
     imprimirListaCartas(mano);
 
+
+
+    printf("\n");
+
+    printf("Pila de robado:\n");
+
+    imprimirPila(pila_robo);
     // Liberar memoria
     free(deck_general);
     free(pila_robo->cartas);
@@ -308,7 +316,6 @@ void imprimirPila(Pila* pila) {
     if (pila->tope == -1) {
         printf("La pila está vacía.\n");
     } else {
-        printf("Contenido de la pila:\n");
         for (int i = pila->tope; i >= 0; i--) {
             printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n",
                    pila->cartas[i].nombre, pila->cartas[i].ataque,
