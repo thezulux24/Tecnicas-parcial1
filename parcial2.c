@@ -304,12 +304,13 @@ void robarCartas(Pila* pila_robo, ListaEnlazada* mano) {
     }
     mano->longitud = 0;
 
-    // Desapilar hasta 5 cartas de la pila de robo y agregarlas a la mano
-    for (int i = 0; i < 5 && pila_robo->tope >= 0; i++) {
+    // Desapilar cartas de la pila de robo y agregarlas a la mano hasta que tenga 5 cartas
+    while (mano->longitud < 5 && pila_robo->tope >= 0) {
         Carta carta = desapilar(pila_robo);
         agregarAlFinal(mano, carta);
     }
 }
+
 
 
 void imprimirPila(Pila* pila) {
