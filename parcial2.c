@@ -50,20 +50,41 @@ void apilar(Pila* pila, Carta carta);
 Carta desapilar(Pila* pila);
 void barajar(Carta* cartas, int n);
 Carta seleccionarCartaAleatoria(Carta* cartas_disponibles);
+void seleccionarCartasDeck (Carta* cartas_disponibles, ListaEnlazada* deck_general, int num_cartas_inicial);
 
 int main() {
     // Definir todas las cartas disponibles en el juego
     Carta cartas_disponibles[NUM_CARTAS] = {
-        {"Ataque", 5, 0, 0, -1},
-        {"Defensa", 0, 5, 0, -1},
-        // Definir el resto de las cartas aquí
+            {"Ataque", 5, 0, 0, -1},
+            {"Defensa", 0, 5, 0, -1},
+            {"Ultima Sangre", 12, 0, -5, -1},
+            {"Milagro", 0, 0, 0, 1},
+            {"Resplandor", 15, 0, 0, -2},
+            {"Desvio", 0, 12, 0, -2},
+            {"Rebote", 5, 5, 0, -1},
+            {"Furia", 8, 3, 0, -2},
+            {"Escudo Divino", 0, 10, 0, -2},
+            {"Bendición", 0, 0, 15, -3},
+            {"Contraataque", 6, 0, 0, -2},
+            {"Curación", 0, 0, 20, -3},
+            {"Fuego Sagrado", 10, 0, 0, -3},
+            {"Meditación", 0, 0, 0, 3}
+
     };
+
 
     // Crear el deck general con las cartas iniciales
     ListaEnlazada* deck_general = crearListaEnlazada();
-    for (int i = 0; i < INICIAL_DECK; i++) {
-        agregarAlFinal(deck_general, cartas_disponibles[i]);
+    seleccionarCartasDeck(cartas_disponibles, deck_general, INICIAL_DECK);
+
+    // Prueba de impresion de cartas aleatorias para la Mano
+    printf("Deck General:\n");
+    Nodo* actual = deck_general->cabeza;
+    while (actual != NULL) {
+        printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n", actual->carta.nombre, actual->carta.ataque, actual->carta.defensa, actual->carta.vida, actual->carta.energia);
+        actual = actual->siguiente;
     }
+
 
     // Barajar el deck general y colocarlo en la pila de robo
     barajar(cartas_disponibles, NUM_CARTAS);
@@ -168,4 +189,23 @@ Carta seleccionarCartaAleatoria(Carta* cartas_disponibles) {
     srand(time(NULL));
     int indice = rand() % 3;
     return cartas_disponibles[indice];
+}
+
+void seleccionarCartasDeck(Carta* cartas_disponibles, ListaEnlazada* deck_general, int num_cartas_inicial) {
+    srand(time(NULL));
+    int cartas_seleccionadas[num_cartas_inicial]; // Array para registrar las cartas seleccionadas
+    for (int i = 0; i < num_cartas_inicial; i++) {
+        cartas_seleccionadas[i] = 0; // Inicializar todas las cartas como no seleccionadas
+    }
+
+    // Seleccionar aleatoriamente las cartas sin repetición
+    int cartas_seleccionadas_count = 0;
+    while (cartas_seleccionadas_count < num_cartas_inicial) {
+        int indice_carta = rand() % NUM_CARTAS; // Seleccionar un índice aleatorio dentro del rango del array de cartas disponibles
+        if (cartas_seleccionadas[indice_carta] == 0) { // Verificar si la carta ya fue seleccionada
+            agregarAlFinal(deck_general, cartas_disponibles[indice_carta]); // Agregar la carta al deck general
+            cartas_seleccionadas[indice_carta] = 1; // Marcar la carta como seleccionada
+            cartas_seleccionadas_count++;
+        }
+    }
 }
