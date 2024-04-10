@@ -58,7 +58,6 @@ Pila* inicializarPila(int capacidad);
 void apilar(Pila* pila, Carta carta);
 Carta desapilar(Pila* pila);
 void barajarListaYApilar(ListaEnlazada* lista, Pila* pila_robo);
-Carta seleccionarCartaAleatoria(Carta* cartas_disponibles);
 void seleccionarCartasDeck (Carta* cartas_disponibles, ListaEnlazada* deck_general, int num_cartas_inicial);
 void imprimirListaCartas(ListaEnlazada* lista);
 void robarCartas(Pila* pila_robo, ListaEnlazada* mano);
@@ -67,6 +66,8 @@ void imprimirPila(Pila* pila);
 
 
 int main() {
+    int jugar = 1; //booleano para jugar
+
     // Definir todas las cartas disponibles en el juego
     Carta cartas_disponibles[NUM_CARTAS] = {
             {"Ataque", 5, 0, 0, -1},
@@ -104,47 +105,55 @@ int main() {
     ListaEnlazada* deck_general = crearListaEnlazada();
     seleccionarCartasDeck(cartas_disponibles, deck_general, INICIAL_DECK);
 
-
+    /*
     // Prueba de impresion de cartas aleatorias para la Mano
     printf("Deck General:\n");
-
     imprimirListaCartas(deck_general);
+    */
     Pila* pila_robo = inicializarPila(NUM_CARTAS);
     // Barajar el deck general y colocarlo en la pila de robo
 
     barajarListaYApilar(deck_general, pila_robo);
-
+    /*
     printf("\n");
-
     printf("Deck General Barajado:\n");
-
     imprimirListaCartas(deck_general);
-
     printf("\n");
-
     printf("Pila de robado:\n");
-
     imprimirPila(pila_robo);
-
+    */
 
     ListaEnlazada * pila_descarte = inicializarPila(NUM_CARTAS);
     ListaEnlazada * mano = crearListaEnlazada();
-
     robarCartas(pila_robo, mano);
 
 
-
+    /*
     printf("Mano:\n");
-
     imprimirListaCartas(mano);
-
-
-
     printf("\n");
-
     printf("Pila de robado:\n");
-
     imprimirPila(pila_robo);
+    */
+    while (jugar == 1){
+
+
+        if (jugador.personaje.vida_actual <= 0){
+
+            printf("HAS PERDIDO\n");
+            jugar = 0;
+
+        }
+        if (enemigo.personaje.vida_actual <= 0){
+
+            printf("HAS PERDIDO\n");
+            // Aqui deberia existir una funcion para que escoga una de las 3 cartas aleatroias
+            jugar = 0;
+
+        }
+    }
+
+
     // Liberar memoria
     free(deck_general);
     free(pila_robo->cartas);
@@ -260,6 +269,7 @@ void barajarListaYApilar(ListaEnlazada* lista, Pila* pila_robo) {
 
 
 // Función para imprimir el contenido de una lista enlazada de cartas
+
 void imprimirListaCartas(ListaEnlazada* lista) {
     Nodo* actual = lista->cabeza;
     while (actual != NULL) {
@@ -269,12 +279,7 @@ void imprimirListaCartas(ListaEnlazada* lista) {
 }
 
 
-// Función para seleccionar aleatoriamente una carta de entre tres opciones
-Carta seleccionarCartaAleatoria(Carta* cartas_disponibles) {
-    srand(time(NULL));
-    int indice = rand() % 3;
-    return cartas_disponibles[indice];
-}
+
 
 void seleccionarCartasDeck(Carta* cartas_disponibles, ListaEnlazada* deck_general, int num_cartas_inicial) {
     srand(time(NULL));
