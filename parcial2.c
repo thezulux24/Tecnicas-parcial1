@@ -48,10 +48,10 @@ void agregarAlFinal(ListaEnlazada* lista, Carta carta);
 Pila* inicializarPila(int capacidad);
 void apilar(Pila* pila, Carta carta);
 Carta desapilar(Pila* pila);
-void barajar(Carta* cartas, int n);
+void barajarListaYApilar(ListaEnlazada* lista, Pila* pila_robo);
 Carta seleccionarCartaAleatoria(Carta* cartas_disponibles);
 void seleccionarCartasDeck (Carta* cartas_disponibles, ListaEnlazada* deck_general, int num_cartas_inicial);
-
+void imprimirListaCartas(ListaEnlazada* lista);
 int main() {
     // Definir todas las cartas disponibles en el juego
     Carta cartas_disponibles[NUM_CARTAS] = {
@@ -77,26 +77,31 @@ int main() {
     ListaEnlazada* deck_general = crearListaEnlazada();
     seleccionarCartasDeck(cartas_disponibles, deck_general, INICIAL_DECK);
 
+
     // Prueba de impresion de cartas aleatorias para la Mano
     printf("Deck General:\n");
-    Nodo* actual = deck_general->cabeza;
-    while (actual != NULL) {
-        printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n", actual->carta.nombre, actual->carta.ataque, actual->carta.defensa, actual->carta.vida, actual->carta.energia);
-        actual = actual->siguiente;
-    }
 
-
-    // Barajar el deck general y colocarlo en la pila de robo
-    barajar(cartas_disponibles, NUM_CARTAS);
+    imprimirListaCartas(deck_general);
     Pila* pila_robo = inicializarPila(NUM_CARTAS);
-    for (int i = 0; i < NUM_CARTAS; i++) {
-        apilar(pila_robo, cartas_disponibles[i]);
-    }
+    // Barajar el deck general y colocarlo en la pila de robo
+
+    barajarListaYApilar(deck_general, pila_robo );
+    
+    printf("\n");
+
+
+    printf("Deck General Barajado:\n");
+    imprimirListaCartas(deck_general);
+
+
+
+
+
 
     // Inicializar la pila de descarte
     Pila* pila_descarte = inicializarPila(NUM_CARTAS);
 
-    // Implementar el resto de la lógica del combate aquí
+
 
     // Liberar memoria
     free(deck_general);
@@ -172,17 +177,60 @@ Carta desapilar(Pila* pila) {
 }
 
 // Función para barajar un array de cartas
-void barajar(Carta* cartas, int n) {
-    if (n > 1) {
-        srand(time(NULL));
-        for (int i = 0; i < n - 1; i++) {
-            int j = i + rand() / (RAND_MAX / (n - i) + 1);
-            Carta temp = cartas[j];
-            cartas[j] = cartas[i];
-            cartas[i] = temp;
-        }
+void barajarListaYApilar(ListaEnlazada* lista, Pila* pila_robo) {
+    srand(time(NULL));
+
+    // Obtener la longitud de la lista
+    int longitud = lista->longitud;
+
+    // Si la lista tiene menos de 2 elementos, no hay necesidad de barajar
+    if (longitud < 2) {
+        return;
+    }
+
+    // Convertir la lista enlazada a un array de punteros a nodo
+    Nodo** nodos = (Nodo**)malloc(longitud * sizeof(Nodo*));
+    Nodo* actual = lista->cabeza;
+    int i = 0;
+    while (actual != NULL) {
+        nodos[i] = actual;
+        actual = actual->siguiente;
+        i++;
+    }
+
+    // Barajar los punteros en el array
+    for (i = longitud - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        Nodo* temp = nodos[i];
+        nodos[i] = nodos[j];
+        nodos[j] = temp;
+    }
+
+    // Reconstruir la lista enlazada con los nodos barajados
+    lista->cabeza = nodos[0];
+    for (i = 0; i < longitud - 1; i++) {
+        nodos[i]->siguiente = nodos[i + 1];
+    }
+    nodos[longitud - 1]->siguiente = NULL;
+
+    // Apilar los nodos barajados en la pila de robo
+    for (i = 0; i < longitud; i++) {
+        apilar(pila_robo, nodos[i]->carta);
+    }
+
+    // Liberar memoria del array de nodos
+    free(nodos);
+}
+
+// Función para imprimir el contenido de una lista enlazada de cartas
+void imprimirListaCartas(ListaEnlazada* lista) {
+    Nodo* actual = lista->cabeza;
+    while (actual != NULL) {
+        printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n", actual->carta.nombre, actual->carta.ataque, actual->carta.defensa, actual->carta.vida, actual->carta.energia);
+        actual = actual->siguiente;
     }
 }
+
 
 // Función para seleccionar aleatoriamente una carta de entre tres opciones
 Carta seleccionarCartaAleatoria(Carta* cartas_disponibles) {
