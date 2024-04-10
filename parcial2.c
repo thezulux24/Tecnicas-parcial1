@@ -56,6 +56,18 @@ int main() {
     Carta cartas_disponibles[NUM_CARTAS] = {
         {"Ataque", 5, 0, 0, -1},
         {"Defensa", 0, 5, 0, -1},
+        {"Ultima Sangre", 12, 0, -5, -1},
+        {"Milagro", 0, 0, 0, 1},
+        {"Resplandor", 15, 0, 0, -2},
+        {"Desvio", 0, 12, 0, -2},
+        {"Rebote", 5, 5, 0, -1},
+        {"Sacrificio",0, 0, -3, 2},
+        {"Estocada", 8, 2, 0, -2},
+        {"Barrera", 3, 8, 0, -2},
+        {"Regeneracion", 0, 0, 5, -1},
+        {"Arranca Vida", 5, 0, 5, -2},
+        {"Invencible", 0, 30, 0, -3},
+        {"Maldicion", 10, 10, -5, -2},
         // Definir el resto de las cartas aquí
     };
 
