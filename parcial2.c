@@ -137,14 +137,9 @@ int main() {
        printf("Pila de robado:\n");
        imprimirPila(pila_robo);
     */
-    int atack;
-    int defense;
-    int energia;
-    int ataqueEnemigo;
+
     printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
     while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
-        atack = 0, defense = 0, energia = 3;
-        ataqueEnemigo = rand() % 8 + 5;
 
 
         if (jugador.personaje.vida_actual <= 0) {
