@@ -33,10 +33,13 @@ typedef struct Personaje {
     char nombre[100];
     int vida_actual;
     int vida_total;
+    int ataque;
 } Personaje;
 
 typedef struct Jugador {
     Personaje personaje;
+    int energia;
+    int defensa;
 } Jugador;
 
 typedef struct Enemigo {
@@ -140,6 +143,7 @@ int main() {
 
     printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
     while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
+
 
 
         if (jugador.personaje.vida_actual <= 0) {
