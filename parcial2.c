@@ -72,20 +72,20 @@ int main() {
 
     // Definir todas las cartas disponibles en el juego
     Carta cartas_disponibles[NUM_CARTAS] = {
-            {"Ataque", 5, 0, 0, -1},
-            {"Defensa", 0, 5, 0, -1},
-            {"Ultima Sangre", 12, 0, -5, -1},
-            {"Milagro", 0, 0, 0, 1},
-            {"Resplandor", 15, 0, 0, -2},
-            {"Desvio", 0, 12, 0, -2},
-            {"Rebote", 5, 5, 0, -1},
-            {"Furia", 8, 3, 0, -2},
-            {"Escudo Divino", 0, 10, 0, -2},
-            {"Bendición", 0, 5, 10, -3},
-            {"Contraataque", 6, 0, 0, -2},
-            {"Curación", 0, 0, 20, -3},
-            {"Fuego Sagrado", 10, 0, 0, -3},
-            {"Meditación", 0, 0, 0, 3}
+            {"Ataque",        5,  0,  0,  -1},
+            {"Defensa",       0,  5,  0,  -1},
+            {"Ultima Sangre", 12, 0,  -5, -1},
+            {"Milagro",       0,  0,  0,  1},
+            {"Resplandor",    15, 0,  0,  -2},
+            {"Desvio",        0,  12, 0,  -2},
+            {"Rebote",        5,  5,  0,  -1},
+            {"Furia",         8,  3,  0,  -2},
+            {"Escudo Divino", 0,  10, 0,  -2},
+            {"Bendición",     0,  5,  10, -3},
+            {"Contraataque",  6,  0,  0,  -2},
+            {"Curación",      0,  0,  20, -3},
+            {"Fuego Sagrado", 10, 0,  0,  -3},
+            {"Meditación",    0,  0,  0,  3}
 
     };
 
@@ -104,7 +104,7 @@ int main() {
 
 
     // Crear el deck general con las cartas iniciales
-    ListaEnlazada* deck_general = crearListaEnlazada();
+    ListaEnlazada *deck_general = crearListaEnlazada();
     seleccionarCartasDeck(cartas_disponibles, deck_general, INICIAL_DECK);
 
     /*
@@ -112,7 +112,7 @@ int main() {
     printf("Deck General:\n");
     imprimirListaCartas(deck_general);
     */
-    Pila* pila_robo = inicializarPila(NUM_CARTAS);
+    Pila *pila_robo = inicializarPila(NUM_CARTAS);
     // Barajar el deck general y colocarlo en la pila de robo
 
     barajarListaYApilar(deck_general, pila_robo);
@@ -125,8 +125,8 @@ int main() {
     imprimirPila(pila_robo);
     */
 
-    ListaEnlazada* pila_descarte = inicializarPila(NUM_CARTAS);
-    ListaEnlazada* mano = crearListaEnlazada();
+    ListaEnlazada *pila_descarte = inicializarPila(NUM_CARTAS);
+    ListaEnlazada *mano = crearListaEnlazada();
     robarCartas(pila_robo, mano);
 
 
@@ -137,30 +137,35 @@ int main() {
        printf("Pila de robado:\n");
        imprimirPila(pila_robo);
     */
-       while (jugar == 1){
+    int atack;
+    int defense;
+    int energia;
+    int ataqueEnemigo;
+    printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
+    while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
+        atack = 0, defense = 0, energia = 3;
+        ataqueEnemigo = rand() % 8 + 5;
 
 
-           if (jugador.personaje.vida_actual <= 0){
+        if (jugador.personaje.vida_actual <= 0) {
+            printf("HAS PERDIDO\n");
+            jugar = 0;
+        }
+        if (enemigo.personaje.vida_actual <= 0) {
 
-               printf("HAS PERDIDO\n");
-               jugar = 0;
+            printf("HAS  GANADO, SELECIONA UNA DE LAS 3 CARTAS\n");
+            Carta *cartas3 = seleccionarTresCartasAleatorias(cartas_disponibles, deck_general);
+            // Imprimir las cartas seleccionadas
+            printf("Cartas a seleccionar:\n");
+            for (int i = 0; i < 3; i++) {
+                printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n", cartas3[i].nombre,
+                       cartas3[i].ataque, cartas3[i].defensa,
+                       cartas3[i].vida, cartas3[i].energia);
+            }
+            jugar = 0;
 
-           }
-           if (enemigo.personaje.vida_actual <= 0){
-
-               printf("HAS  GANADO, SELECIONA UNA DE LAS 3 CARTAS\n");
-               Carta* cartas3 = seleccionarTresCartasAleatorias(cartas_disponibles, deck_general);
-               // Imprimir las cartas seleccionadas
-               printf("Cartas a seleccionar:\n");
-               for (int i = 0; i < 3; i++) {
-                   printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n", cartas3[i].nombre,
-                          cartas3[i].ataque, cartas3[i].defensa,
-                          cartas3[i].vida, cartas3[i].energia);
-               }
-               jugar = 0;
-
-           }
-       }
+        }
+    }
 
 
        // Liberar memoria
