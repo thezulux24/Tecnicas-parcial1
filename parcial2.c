@@ -73,6 +73,7 @@ void moverCartaAMiniDeck(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte)
 void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
 void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte);
 
+
 int main() {
     int jugar = 1; //booleano para jugar
 
@@ -149,8 +150,9 @@ int main() {
     while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
     	//jugador.personaje.vida_actual, enemigo.personaje.vida_actual, mano, pila_robo, pila_descarte
     	robarCartas(pila_robo, mano);
-    	turno(enemigo, jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte);
-    	void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
+        turno(enemigo, jugador, mano, pila_robo, pila_descarte);
+
+        void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
 		
 		if (enemigo.personaje.ataque > jugador.defensa){
 			jugador.personaje.vida_actual -= jugador.defensa + enemigo.personaje.ataque;
@@ -200,8 +202,8 @@ int main() {
 		jugador.termino = 1;
 		enemigo.personaje.ataque = rand() % 8 + 5;
 		while (jugador.termino!=0){
-			printf("Hola %s, tu vida es &d/%d\n", jugador.personaje.nombre, jugador.personaje.vida_actual, jugador.personaje.vida_total);
-			printf("Su enemigo se llama %s, su vida es de %d/%d", enemigo.personaje.nombre, enemigo.personaje.vida_actual, enemigo.personaje.vida_total);
+            printf("Hola %s, tu vida es %d/%d\n", jugador.personaje.nombre, jugador.personaje.vida_actual, jugador.personaje.vida_total);
+            printf("Su enemigo se llama %s, su vida es de %d/%d", enemigo.personaje.nombre, enemigo.personaje.vida_actual, enemigo.personaje.vida_total);
 			printf("----------------- \n");
 		    printf("\n Las cartas disponibles son: \n");
 		    printf("Mano:\n");
@@ -211,21 +213,22 @@ int main() {
 	       	imprimirPila(pila_robo);
 	       	printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
 		    printf("\n ----------------- \n");
-		    scanf("%d", jugador.seleccion);
+            scanf("%d", &jugador.seleccion);
 		    if (jugador.seleccion==0){
 		    	jugador.termino = 0;
 				printf("\n ----------------- \n");
 	            printf("turno finalizado\n");
 		    }
 			else if (jugador.seleccion!=0 && jugador.energia>0){
-				jugador.personaje.ataque += Carta[jugador.seleccion-1]->ataque;
-				jugador.defensa += Carta[jugador.seleccion-1]->defensa;
-				jugador.energia -= Carta[jugador.seleccion-1]->energia;
-				jugador.personaje.vida_actual += Carta[jugador.seleccion]->vida;
-				
-				moverCartaAMiniDeck(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
-				
-				if (enemigo.personaje.vida_actual > 0){
+                jugador.personaje.ataque += obtenerCartaEnIndice(mano, jugador.seleccion - 1).ataque;
+                jugador.defensa += obtenerCartaEnIndice(mano, jugador.seleccion - 1).defensa;
+                jugador.energia -= obtenerCartaEnIndice(mano, jugador.seleccion - 1).energia;
+                jugador.personaje.vida_actual += obtenerCartaEnIndice(mano, jugador.seleccion - 1).vida;
+
+
+                moverCartaAMiniDeck(mano, pila_descarte);
+
+                if (enemigo.personaje.vida_actual > 0){
 					printf("has generado %d dano a tu enemigo\n", jugador.personaje.ataque);
 					enemigo.personaje.vida_actual -=jugador.personaje.ataque;
 				}
