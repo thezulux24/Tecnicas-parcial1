@@ -34,6 +34,7 @@ typedef struct Personaje {
     int vida_actual;
     int vida_total;
     int ataque;
+
 } Personaje;
 
 typedef struct Jugador {
@@ -72,37 +73,19 @@ Carta obtenerCartaEnIndice(ListaEnlazada* lista, int indice);
 void moverCartaAMiniDeck(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
 void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
 void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte);
-
+void inicializarCartasDisponibles(Carta* cartas_disponibles);
 
 int main() {
     int jugar = 1; //booleano para jugar
-
     // Definir todas las cartas disponibles en el juego
-    Carta cartas_disponibles[NUM_CARTAS] = {
-            {"Ataque",        5,  0,  0,  -1},
-            {"Defensa",       0,  5,  0,  -1},
-            {"Ultima Sangre", 12, 0,  -5, -1},
-            {"Milagro",       0,  0,  0,  1},
-            {"Resplandor",    15, 0,  0,  -2},
-            {"Desvio",        0,  12, 0,  -2},
-            {"Rebote",        5,  5,  0,  -1},
-            {"Furia",         8,  3,  0,  -2},
-            {"Escudo Divino", 0,  10, 0,  -2},
-            {"Bendición",     0,  5,  10, -3},
-            {"Contraataque",  6,  0,  0,  -2},
-            {"Curación",      0,  0,  20, -3},
-            {"Fuego Sagrado", 10, 0,  0,  -3},
-            {"Meditación",    0,  0,  0,  3}
-
-    };
-
+    Carta cartas_disponibles[NUM_CARTAS];
+    // Llamar a la función para inicializar las cartas disponibles
+    inicializarCartasDisponibles(cartas_disponibles);
     Jugador jugador;
     Enemigo enemigo;
-
     // Definir nombre del jugador
     printf("Ingresa el nombre del jugador: ");
     fgets(jugador.personaje.nombre, sizeof(jugador.personaje.nombre), stdin);
-
     strcpy(enemigo.personaje.nombre, "Kratos"); // ya que no se puede declarar con "="
     jugador.personaje.vida_actual = 50;
     jugador.personaje.vida_total = 50;
@@ -511,3 +494,19 @@ int main() {
            mini_deck->longitud--;
        }
    }
+void inicializarCartasDisponibles(Carta* cartas_disponibles) {
+    cartas_disponibles[0] = (Carta){"Ataque", 5, 0, 0, -1};
+    cartas_disponibles[1] = (Carta){"Defensa", 0, 5, 0, -1};
+    cartas_disponibles[2] = (Carta){"Ultima Sangre", 12, 0, -5, -1};
+    cartas_disponibles[3] = (Carta){"Milagro", 0, 0, 0, 1};
+    cartas_disponibles[4] = (Carta){"Resplandor", 15, 0, 0, -2};
+    cartas_disponibles[5] = (Carta){"Desvio", 0, 12, 0, -2};
+    cartas_disponibles[6] = (Carta){"Rebote", 5, 5, 0, -1};
+    cartas_disponibles[7] = (Carta){"Furia", 8, 3, 0, -2};
+    cartas_disponibles[8] = (Carta){"Escudo Divino", 0, 10, 0, -2};
+    cartas_disponibles[9] = (Carta){"Bendición", 0, 5, 10, -3};
+    cartas_disponibles[10] = (Carta){"Contraataque", 6, 0, 0, -2};
+    cartas_disponibles[11] = (Carta){"Curación", 0, 0, 20, -3};
+    cartas_disponibles[12] = (Carta){"Fuego Sagrado", 10, 0, 0, -3};
+    cartas_disponibles[13] = (Carta){"Meditación", 0, 0, 0, 3};
+}
