@@ -40,6 +40,8 @@ typedef struct Jugador {
     Personaje personaje;
     int energia;
     int defensa;
+    int seleccion;
+    int termino;
 } Jugador;
 
 typedef struct Enemigo {
@@ -69,6 +71,7 @@ Carta* seleccionarTresCartasAleatorias(Carta* cartas_disponibles, ListaEnlazada*
 Carta obtenerCartaEnIndice(ListaEnlazada* lista, int indice);
 void moverCartaAMiniDeck(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
 void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
+void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte);
 
 int main() {
     int jugar = 1; //booleano para jugar
@@ -110,47 +113,59 @@ int main() {
     ListaEnlazada *deck_general = crearListaEnlazada();
     seleccionarCartasDeck(cartas_disponibles, deck_general, INICIAL_DECK);
 
-    /*
+    
     // Prueba de impresion de cartas aleatorias para la Mano
     printf("Deck General:\n");
     imprimirListaCartas(deck_general);
-    */
+    
     Pila *pila_robo = inicializarPila(NUM_CARTAS);
     // Barajar el deck general y colocarlo en la pila de robo
 
     barajarListaYApilar(deck_general, pila_robo);
-    /*
+    
     printf("\n");
     printf("Deck General Barajado:\n");
     imprimirListaCartas(deck_general);
     printf("\n");
     printf("Pila de robado:\n");
     imprimirPila(pila_robo);
-    */
+    
 
     ListaEnlazada *pila_descarte = inicializarPila(NUM_CARTAS);
     ListaEnlazada *mano = crearListaEnlazada();
     robarCartas(pila_robo, mano);
 
 
-    /*
+    
        printf("Mano:\n");
        imprimirListaCartas(mano);
        printf("\n");
        printf("Pila de robado:\n");
        imprimirPila(pila_robo);
-    */
+    
 
     printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
+    
     while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
-
-
+    	//jugador.personaje.vida_actual, enemigo.personaje.vida_actual, mano, pila_robo, pila_descarte
+    	robarCartas(pila_robo, mano);
+    	turno(enemigo, jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte);
+    	void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
+		
+		if (enemigo.personaje.ataque > jugador.defensa){
+			jugador.personaje.vida_actual -= jugador.defensa + enemigo.personaje.ataque;
+			printf("el enemigo ha generado %d dano\n", enemigo.personaje.ataque - jugador.defensa);
+		}
+		else{
+			printf("¡Has bloqueado el ataque!\n");
+		}
+		
 
         if (jugador.personaje.vida_actual <= 0) {
             printf("HAS PERDIDO\n");
             jugar = 0;
         }
-        if (enemigo.personaje.vida_actual <= 0) {
+        else if (enemigo.personaje.vida_actual <= 0) {
 
             printf("HAS  GANADO, SELECIONA UNA DE LAS 3 CARTAS\n");
             Carta *cartas3 = seleccionarTresCartasAleatorias(cartas_disponibles, deck_general);
@@ -165,6 +180,7 @@ int main() {
 
         }
     }
+    
 
 
        // Liberar memoria
@@ -175,7 +191,52 @@ int main() {
 
        return 0;
    }
-
+   // funcion de la pelea
+   
+	void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte){
+		jugador.personaje.ataque=0;
+		jugador.defensa=0;
+		jugador.energia=3;
+		jugador.termino = 1;
+		enemigo.personaje.ataque = rand() % 8 + 5;
+		while (jugador.termino!=0){
+			printf("Hola %s, tu vida es &d/%d\n", jugador.personaje.nombre, jugador.personaje.vida_actual, jugador.personaje.vida_total);
+			printf("Su enemigo se llama %s, su vida es de %d/%d", enemigo.personaje.nombre, enemigo.personaje.vida_actual, enemigo.personaje.vida_total);
+			printf("----------------- \n");
+		    printf("\n Las cartas disponibles son: \n");
+		    printf("Mano:\n");
+	    	imprimirListaCartas(mano);
+	       	printf("\n");
+	       	printf("Las cartas restantes en la Pila de robado son:\n");
+	       	imprimirPila(pila_robo);
+	       	printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
+		    printf("\n ----------------- \n");
+		    scanf("%d", jugador.seleccion);
+		    if (jugador.seleccion==0){
+		    	jugador.termino = 0;
+				printf("\n ----------------- \n");
+	            printf("turno finalizado\n");
+		    }
+			else if (jugador.seleccion!=0 && jugador.energia>0){
+				jugador.personaje.ataque += Carta[jugador.seleccion-1]->ataque;
+				jugador.defensa += Carta[jugador.seleccion-1]->defensa;
+				jugador.energia -= Carta[jugador.seleccion-1]->energia;
+				jugador.personaje.vida_actual += Carta[jugador.seleccion]->vida;
+				
+				moverCartaAMiniDeck(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
+				
+				if (enemigo.personaje.vida_actual > 0){
+					printf("has generado %d dano a tu enemigo\n", jugador.personaje.ataque);
+					enemigo.personaje.vida_actual -=jugador.personaje.ataque;
+				}
+			}
+			else {
+				printf("ERROR\n");
+			}
+		} 
+	    
+	}
+	
    // Función para crear un nodo de la lista enlazada
    Nodo* crearNodo(Carta carta) {
        Nodo* nuevoNodo = (Nodo*)malloc(sizeof(Nodo));
