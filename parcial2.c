@@ -85,16 +85,9 @@ int main() {
     // Definir nombre del jugador
     printf("Ingresa el nombre del jugador: ");
     fgets(jugador.personaje.nombre, sizeof(jugador.personaje.nombre), stdin);
-    strcpy(enemigo.personaje.nombre, "Kratos"); // ya que no se puede declarar con "="
-    jugador.personaje.vida_actual = 50;
-    jugador.personaje.vida_total = 50;
-    enemigo.personaje.vida_actual = 50;
-    enemigo.personaje.vida_total = 50;
-
     // Crear el deck general con las cartas iniciales
     ListaEnlazada *deck_general = crearListaEnlazada();
     seleccionarCartasDeck(cartas_disponibles, deck_general, INICIAL_DECK);
-
     /*
     // Prueba de impresion de cartas aleatorias para la Mano
     printf("Deck General:\n");
@@ -102,7 +95,6 @@ int main() {
     */
     Pila *pila_robo = inicializarPila(NUM_CARTAS);
     // Barajar el deck general y colocarlo en la pila de robo
-
     barajarListaYApilar(deck_general, pila_robo);
     /*
     printf("\n");
@@ -112,7 +104,6 @@ int main() {
     printf("Pila de robado:\n");
     imprimirPila(pila_robo);
      */
-
     ListaEnlazada *pila_descarte = inicializarPila(NUM_CARTAS);
     ListaEnlazada *mano = crearListaEnlazada();
     robarCartas(pila_robo, mano);
@@ -123,33 +114,30 @@ int main() {
       printf("Pila de robado:\n");
       imprimirPila(pila_robo);
    */
-   printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
-   while(seleccion){
-
-
-   while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
-       robarCartas(pila_robo, mano);
-       turno(enemigo, jugador, mano, pila_robo, pila_descarte,seleccion);
-       moverCartasAlFinalizarTurno(mano, pila_descarte);
+    printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
+    while (seleccion) {
+        while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
+            robarCartas(pila_robo, mano);
+            turno(enemigo, jugador, mano, pila_robo, pila_descarte, seleccion);
+            moverCartasAlFinalizarTurno(mano, pila_descarte);
         }
-       if (jugador.personaje.vida_actual <= 0) {
-           printf("HAS PERDIDO\n");
-           seleccion = 0;
-       }
-       else  {
-           printf("HAS  GANADO, SELECIONA UNA DE LAS 3 CARTAS\n");
-           Carta *cartas3 = seleccionarTresCartasAleatorias(cartas_disponibles, deck_general);
-           // Imprimir las cartas seleccionadas
-           printf("Cartas a seleccionar:\n");
-           for (int i = 0; i < 3; i++) {
-               printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n", cartas3[i].nombre,
-                      cartas3[i].ataque, cartas3[i].defensa,
-                      cartas3[i].vida, cartas3[i].energia);
-           }
-           seleccion = 0;
+        if (jugador.personaje.vida_actual <= 0) {
+            printf("HAS PERDIDO\n");
+            seleccion = 0;
+        } else {
+            printf("HAS  GANADO, SELECIONA UNA DE LAS 3 CARTAS\n");
+            Carta *cartas3 = seleccionarTresCartasAleatorias(cartas_disponibles, deck_general);
+            // Imprimir las cartas seleccionadas
+            printf("Cartas a seleccionar:\n");
+            for (int i = 0; i < 3; i++) {
+                printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n", cartas3[i].nombre,
+                       cartas3[i].ataque, cartas3[i].defensa,
+                       cartas3[i].vida, cartas3[i].energia);
+            }
+            seleccion = 0;
 
-       }
-   }
+        }
+    }
       // Liberar memoria
       free(deck_general);
       free(pila_robo->cartas);
@@ -160,6 +148,11 @@ int main() {
 
 
    void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int seleccion){
+       strcpy(enemigo.personaje.nombre, "Kratos"); // ya que no se puede declarar con "="
+       jugador.personaje.vida_actual = 50;
+       jugador.personaje.vida_total = 50;
+       enemigo.personaje.vida_actual = 50;
+       enemigo.personaje.vida_total = 50;
        jugador.personaje.ataque=0;
        jugador.defensa=0;
        jugador.energia=3;
