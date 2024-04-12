@@ -41,7 +41,6 @@ typedef struct Jugador {
     Personaje personaje;
     int energia;
     int defensa;
-    int termino;
 } Jugador;
 
 typedef struct Enemigo {
@@ -82,6 +81,10 @@ int main() {
     inicializarCartasDisponibles(cartas_disponibles);
     Jugador jugador;
     Enemigo enemigo;
+    jugador.personaje.vida_actual = 50;
+    jugador.personaje.vida_total = 50;
+    enemigo.personaje.vida_actual = 50;
+    enemigo.personaje.vida_total = 50;
     // Definir nombre del jugador
     printf("Ingresa el nombre del jugador: ");
     fgets(jugador.personaje.nombre, sizeof(jugador.personaje.nombre), stdin);
@@ -115,7 +118,7 @@ int main() {
       imprimirPila(pila_robo);
    */
     printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
-    while (seleccion) {
+    while (seleccion==1) {
         while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
             robarCartas(pila_robo, mano);
             turno(enemigo, jugador, mano, pila_robo, pila_descarte, seleccion);
@@ -149,16 +152,10 @@ int main() {
 
    void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int seleccion){
        strcpy(enemigo.personaje.nombre, "Kratos"); // ya que no se puede declarar con "="
-       jugador.personaje.vida_actual = 50;
-       jugador.personaje.vida_total = 50;
-       enemigo.personaje.vida_actual = 50;
-       enemigo.personaje.vida_total = 50;
        jugador.personaje.ataque=0;
        jugador.defensa=0;
        jugador.energia=3;
-       jugador.termino = 1;
        enemigo.personaje.ataque = rand() % 8 + 5;
-       while (jugador.termino!=0){
            printf("Hola %s, tu vida es %d/%d\n", jugador.personaje.nombre, jugador.personaje.vida_actual, jugador.personaje.vida_total);
            printf("Su enemigo se llama %s, su vida es de %d/%d", enemigo.personaje.nombre, enemigo.personaje.vida_actual, enemigo.personaje.vida_total);
            printf("----------------- \n");
@@ -172,7 +169,6 @@ int main() {
            printf("\n ----------------- \n");
            scanf("%d", &seleccion);
            if (seleccion==0){
-               jugador.termino = 0;
                printf("\n ----------------- \n");
                printf("turno finalizado\n");
            }
@@ -201,7 +197,6 @@ int main() {
            }
        }
 
-   }
 
    // Función para crear un nodo de la lista enlazada
    Nodo* crearNodo(Carta carta) {
