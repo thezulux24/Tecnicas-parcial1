@@ -83,8 +83,8 @@ int main() {
     Enemigo enemigo;
     jugador.personaje.vida_actual = 50;
     jugador.personaje.vida_total = 50;
-    enemigo.personaje.vida_actual = 50;
-    enemigo.personaje.vida_total = 50;
+    enemigo.personaje.vida_actual = 100;
+    enemigo.personaje.vida_total = 100;
     // Definir nombre del jugador
     printf("Ingresa el nombre del jugador: ");
     fgets(jugador.personaje.nombre, sizeof(jugador.personaje.nombre), stdin);
@@ -120,8 +120,8 @@ int main() {
     printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
     while (seleccion==1) {
         while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
-            robarCartas(pila_robo, mano);
             turno(enemigo, jugador, mano, pila_robo, pila_descarte, seleccion);
+            robarCartas(pila_robo, mano);
             moverCartasAlFinalizarTurno(mano, pila_descarte);
         }
         if (jugador.personaje.vida_actual <= 0) {
@@ -151,23 +151,19 @@ int main() {
 
 
    void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int seleccion){
-       strcpy(enemigo.personaje.nombre, "Kratos"); // ya que no se puede declarar con "="
-       jugador.personaje.ataque=0;
-       jugador.defensa=0;
-       jugador.energia=3;
-       enemigo.personaje.ataque = rand() % 8 + 5;
-       eliminarEspacios(jugador.personaje.nombre);
-       printf("Hola %s, tu vida es %d/%d\n", jugador.personaje.nombre, jugador.personaje.vida_actual, jugador.personaje.vida_total);
-       printf("Su enemigo se llama %s, su vida es de %d/%d", enemigo.personaje.nombre, enemigo.personaje.vida_actual, enemigo.personaje.vida_total);
-           printf("----------------- \n");
-           printf("\n Las cartas disponibles son: \n");
-           printf("Mano:\n");
+           strcpy(enemigo.personaje.nombre, "Kratos"); // ya que no se puede declarar con "="
+           jugador.personaje.ataque=0;
+           jugador.defensa=0;
+           jugador.energia=3;
+           enemigo.personaje.ataque = rand() % 8 + 5;
+           eliminarEspacios(jugador.personaje.nombre);
+           printf("Hola %s, tu vida es %d/%d\n", jugador.personaje.nombre, jugador.personaje.vida_actual, jugador.personaje.vida_total);
+           printf("Su enemigo se llama %s, su vida es de %d/%d\n", enemigo.personaje.nombre, enemigo.personaje.vida_actual, enemigo.personaje.vida_total);
+           printf("-------------------------------------------------------------------- \n");
+           printf("Las cartas disponibles son: \n");
            imprimirListaCartas(mano);
-              printf("\n");
-              printf("Las cartas restantes en la Pila de robado son:\n");
-              imprimirPila(pila_robo);
-              printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
-           printf("\n ----------------- \n");
+           printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
+           printf("-------------------------------------------------------------------- \n");
            scanf("%d", &seleccion);
            if (seleccion==0){
                printf("\n ----------------- \n");
@@ -175,13 +171,10 @@ int main() {
            }
            else if (seleccion!=0 && jugador.energia>0){
                jugador.personaje.ataque += obtenerCartaEnIndice(mano, seleccion - 1).ataque;
-               jugador.defensa += obtenerCartaEnIndice(mano, seleccion - 1).defensa;
-               jugador.energia -= obtenerCartaEnIndice(mano, seleccion - 1).energia;
+               jugador.defensa == obtenerCartaEnIndice(mano, seleccion - 1).defensa;
+               jugador.energia == obtenerCartaEnIndice(mano, seleccion - 1).energia;
                jugador.personaje.vida_actual += obtenerCartaEnIndice(mano, seleccion - 1).vida;
-
-
                moverCartaAMiniDeck(mano, pila_descarte);
-
                if (enemigo.personaje.vida_actual > 0){
                    printf("has generado %d dano a tu enemigo\n", jugador.personaje.ataque);
                    enemigo.personaje.vida_actual -=jugador.personaje.ataque;
@@ -471,20 +464,20 @@ int main() {
       }
    }
    void inicializarCartasDisponibles(Carta* cartas_disponibles) {
-   cartas_disponibles[0] = (Carta){"Ataque", 5, 0, 0, -1};
-   cartas_disponibles[1] = (Carta){"Defensa", 0, 5, 0, -1};
-   cartas_disponibles[2] = (Carta){"Ultima Sangre", 12, 0, -5, -1};
-   cartas_disponibles[3] = (Carta){"Milagro", 0, 0, 0, 1};
-   cartas_disponibles[4] = (Carta){"Resplandor", 15, 0, 0, -2};
-   cartas_disponibles[5] = (Carta){"Desvio", 0, 12, 0, -2};
-   cartas_disponibles[6] = (Carta){"Rebote", 5, 5, 0, -1};
-   cartas_disponibles[7] = (Carta){"Furia", 8, 3, 0, -2};
-   cartas_disponibles[8] = (Carta){"Escudo Divino", 0, 10, 0, -2};
-   cartas_disponibles[9] = (Carta){"Bendición", 0, 5, 10, -3};
-   cartas_disponibles[10] = (Carta){"Contraataque", 6, 0, 0, -2};
-   cartas_disponibles[11] = (Carta){"Curación", 0, 0, 20, -3};
-   cartas_disponibles[12] = (Carta){"Fuego Sagrado", 10, 0, 0, -3};
-   cartas_disponibles[13] = (Carta){"Meditación", 0, 0, 0, 3};
+   cartas_disponibles[0] = (Carta){"1 .Ataque", 5, 0, 0, -1};
+   cartas_disponibles[1] = (Carta){"2 .Defensa", 0, 5, 0, -1};
+   cartas_disponibles[2] = (Carta){"3 .Ultima Sangre", 12, 0, -5, -1};
+   cartas_disponibles[3] = (Carta){"4 .Milagro", 0, 0, 0, 1};
+   cartas_disponibles[4] = (Carta){"5 .Resplandor", 15, 0, 0, -2};
+   cartas_disponibles[5] = (Carta){"6 .Desvio", 0, 12, 0, -2};
+   cartas_disponibles[6] = (Carta){"7 .Rebote", 5, 5, 0, -1};
+   cartas_disponibles[7] = (Carta){"8 .Furia", 8, 3, 0, -2};
+   cartas_disponibles[8] = (Carta){"9 .Escudo Divino", 0, 10, 0, -2};
+   cartas_disponibles[9] = (Carta){"10.Bendición", 0, 5, 10, -3};
+   cartas_disponibles[10] = (Carta){"11.Contraataque", 6, 0, 0, -2};
+   cartas_disponibles[11] = (Carta){"12.Curación", 0, 0, 20, -3};
+   cartas_disponibles[12] = (Carta){"13.Fuego Sagrado", 10, 0, 0, -3};
+   cartas_disponibles[13] = (Carta){"14.Meditación", 0, 0, 0, 3};
    }
 void eliminarEspacios(char *str) {
     int len = strlen(str);
