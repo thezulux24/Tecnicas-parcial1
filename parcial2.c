@@ -68,17 +68,18 @@ void robarCartas(Pila* pila_robo, ListaEnlazada* mano);
 void imprimirPila(Pila* pila);
 Carta* seleccionarTresCartasAleatorias(Carta* cartas_disponibles, ListaEnlazada* deck_general);
 Carta obtenerCartaEnIndice(ListaEnlazada* lista, int indice);
-void moverCartaAMiniDeck(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
 void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
-void turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int* seleccion);
+int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int* seleccion);
 void inicializarCartasDisponibles(Carta* cartas_disponibles);
 void eliminarEspacios(char *str);
 int main() {
     int seleccion = 1;
+    int flagTurno = 1;
     // Definir todas las cartas disponibles en el juego
     Carta cartas_disponibles[NUM_CARTAS];
     // Llamar a la función para inicializar las cartas disponibles
     inicializarCartasDisponibles(cartas_disponibles);
+
     Jugador jugador;
     Enemigo enemigo;
     jugador.personaje.vida_actual = 50;
@@ -119,10 +120,11 @@ int main() {
    */
     printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
     while (seleccion==1) {
-        while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
-            turno(&enemigo, &jugador, mano, pila_robo, pila_descarte, &seleccion);
-            robarCartas(pila_robo, mano);
-            moverCartasAlFinalizarTurno(mano, pila_descarte);
+        while (flagTurno == 1) {
+            flagTurno = turno(&enemigo, &jugador, mano, pila_robo, pila_descarte, &seleccion);
+
+
+
         }
         if (jugador.personaje.vida_actual <= 0) {
             printf("HAS PERDIDO\n");
@@ -150,7 +152,8 @@ int main() {
    }
 
 
-void turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int* seleccion) {
+int  turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int* seleccion) {
+    int flag = 1;
     strcpy(enemigo->personaje.nombre, "Kratos"); // Ya que no se puede declarar con "="
     jugador->personaje.ataque = 0;
     jugador->defensa = 0;
@@ -168,6 +171,7 @@ void turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano
     if (*seleccion == 0) {
         printf("\n ----------------- \n");
         printf("Turno finalizado\n");
+        flag = 0;
     } else if (*seleccion != 0 && jugador->energia > 0) {
         jugador->personaje.ataque += obtenerCartaEnIndice(mano, *seleccion - 1).ataque;
         jugador->defensa += obtenerCartaEnIndice(mano, *seleccion - 1).defensa;
@@ -180,6 +184,7 @@ void turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano
     } else {
         printf("ERROR\n");
     }
+    return flag;
 }
 
 
@@ -290,14 +295,15 @@ void turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano
 
    // Función para imprimir el contenido de una lista enlazada de cartas
 
-   void imprimirListaCartas(ListaEnlazada* lista) {
-      Nodo* actual = lista->cabeza;
-      while (actual != NULL) {
-          printf("%s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n", actual->carta.nombre, actual->carta.ataque, actual->carta.defensa, actual->carta.vida, actual->carta.energia);
-          actual = actual->siguiente;
-      }
-   }
-
+void imprimirListaCartas(ListaEnlazada* lista) {
+    Nodo* actual = lista->cabeza;
+    int indice = 0;
+    while (actual != NULL) {
+        printf("[%d] %s (AT: %d, DF: %d, Vida: %d, Energia: %d)\n", indice+1, actual->carta.nombre, actual->carta.ataque, actual->carta.defensa, actual->carta.vida, actual->carta.energia);
+        actual = actual->siguiente;
+        indice++;
+    }
+}
 
 
 
@@ -417,25 +423,7 @@ void turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano
       return  carta;
       }
 
-   // Función para mover una carta del mini deck a la pila de descarte
-   void moverCartaAMiniDeck(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte) {
-      // Verificar si el mini deck no está vacío
-      if (mini_deck->longitud > 0) {
-          // Obtener la primera carta del mini deck
-          Carta carta = mini_deck->cabeza->carta;
 
-          // Agregar la carta a la pila de descarte
-          agregarAlFinal(pila_descarte, carta);
-
-          // Eliminar la carta del mini deck
-          Nodo* temp = mini_deck->cabeza;
-          mini_deck->cabeza = mini_deck->cabeza->siguiente;
-          free(temp);
-          mini_deck->longitud--;
-
-          printf("La carta se ha movido del mini deck a la pila de descarte.\n");
-      }
-   }
 
    // Función para mover todas las cartas del mini deck a la pila de descarte al finalizar el turno del jugador
    void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte) {
@@ -455,20 +443,20 @@ void turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano
       }
    }
    void inicializarCartasDisponibles(Carta* cartas_disponibles) {
-   cartas_disponibles[0] = (Carta){"1 .Ataque", 5, 0, 0, -1};
-   cartas_disponibles[1] = (Carta){"2 .Defensa", 0, 5, 0, -1};
-   cartas_disponibles[2] = (Carta){"3 .Ultima Sangre", 12, 0, -5, -1};
-   cartas_disponibles[3] = (Carta){"4 .Milagro", 0, 0, 0, 1};
-   cartas_disponibles[4] = (Carta){"5 .Resplandor", 15, 0, 0, -2};
-   cartas_disponibles[5] = (Carta){"6 .Desvio", 0, 12, 0, -2};
-   cartas_disponibles[6] = (Carta){"7 .Rebote", 5, 5, 0, -1};
-   cartas_disponibles[7] = (Carta){"8 .Furia", 8, 3, 0, -2};
-   cartas_disponibles[8] = (Carta){"9 .Escudo Divino", 0, 10, 0, -2};
-   cartas_disponibles[9] = (Carta){"10.Bendición", 0, 5, 10, -3};
-   cartas_disponibles[10] = (Carta){"11.Contraataque", 6, 0, 0, -2};
-   cartas_disponibles[11] = (Carta){"12.Curación", 0, 0, 20, -3};
-   cartas_disponibles[12] = (Carta){"13.Fuego Sagrado", 10, 0, 0, -3};
-   cartas_disponibles[13] = (Carta){"14.Meditación", 0, 0, 0, 3};
+   cartas_disponibles[0] = (Carta){"Ataque", 5, 0, 0, -1};
+   cartas_disponibles[1] = (Carta){"Defensa", 0, 5, 0, -1};
+   cartas_disponibles[2] = (Carta){"Ultima Sangre", 12, 0, -5, -1};
+   cartas_disponibles[3] = (Carta){"Milagro", 0, 0, 0, 1};
+   cartas_disponibles[4] = (Carta){"Resplandor", 15, 0, 0, -2};
+   cartas_disponibles[5] = (Carta){"Desvio", 0, 12, 0, -2};
+   cartas_disponibles[6] = (Carta){"Rebote", 5, 5, 0, -1};
+   cartas_disponibles[7] = (Carta){"Furia", 8, 3, 0, -2};
+   cartas_disponibles[8] = (Carta){"Escudo Divino", 0, 10, 0, -2};
+   cartas_disponibles[9] = (Carta){"Bendición", 0, 5, 10, -3};
+   cartas_disponibles[10] = (Carta){"Contraataque", 6, 0, 0, -2};
+   cartas_disponibles[11] = (Carta){"Curación", 0, 0, 20, -3};
+   cartas_disponibles[12] = (Carta){"Fuego Sagrado", 10, 0, 0, -3};
+   cartas_disponibles[13] = (Carta){"1Meditación", 0, 0, 0, 3};
    }
 void eliminarEspacios(char *str) {
     int len = strlen(str);
