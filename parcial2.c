@@ -30,7 +30,7 @@ typedef struct ListaEnlazada {
 
 // Estructura para representar un personaje o un enemigo
 typedef struct Personaje {
-    char nombre[100];
+    char nombre[20];
     int vida_actual;
     int vida_total;
     int ataque;
@@ -72,7 +72,7 @@ void moverCartaAMiniDeck(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte)
 void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
 void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte,int seleccion);
 void inicializarCartasDisponibles(Carta* cartas_disponibles);
-
+void eliminarEspacios(char *str);
 int main() {
     int seleccion = 1;
     // Definir todas las cartas disponibles en el juego
@@ -156,8 +156,9 @@ int main() {
        jugador.defensa=0;
        jugador.energia=3;
        enemigo.personaje.ataque = rand() % 8 + 5;
-           printf("Hola %s, tu vida es %d/%d\n", jugador.personaje.nombre, jugador.personaje.vida_actual, jugador.personaje.vida_total);
-           printf("Su enemigo se llama %s, su vida es de %d/%d", enemigo.personaje.nombre, enemigo.personaje.vida_actual, enemigo.personaje.vida_total);
+       eliminarEspacios(jugador.personaje.nombre);
+       printf("Hola %s, tu vida es %d/%d\n", jugador.personaje.nombre, jugador.personaje.vida_actual, jugador.personaje.vida_total);
+       printf("Su enemigo se llama %s, su vida es de %d/%d", enemigo.personaje.nombre, enemigo.personaje.vida_actual, enemigo.personaje.vida_total);
            printf("----------------- \n");
            printf("\n Las cartas disponibles son: \n");
            printf("Mano:\n");
@@ -485,3 +486,10 @@ int main() {
    cartas_disponibles[12] = (Carta){"Fuego Sagrado", 10, 0, 0, -3};
    cartas_disponibles[13] = (Carta){"Meditación", 0, 0, 0, 3};
    }
+void eliminarEspacios(char *str) {
+    int len = strlen(str);
+    while (len > 0 && (str[len - 1] == ' ' || str[len - 1] == '\n' || str[len - 1] == '\r')) {
+        str[len - 1] = '\0';
+        len--;
+    }
+}
