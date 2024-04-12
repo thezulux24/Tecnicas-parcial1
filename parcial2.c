@@ -128,10 +128,7 @@ int main() {
         enemigo.personaje.ataque = rand() % 8 + 5;
         while (flagTurno == 1) {
             flagTurno = turno(&enemigo, &jugador, mano, pila_robo, pila_descarte);
-
         }
-        flagTurno = 1;
-
         //barajarListaYApilar(pila_descarte, pila_robo);
         //robarCartas(pila_robo, mano);
 
@@ -139,7 +136,7 @@ int main() {
             printf("HAS PERDIDO\n");
             flagJuego = 0;
         }
-        if (enemigo.personaje.vida_actual <= 0){
+        else if (enemigo.personaje.vida_actual <= 0){
             printf("HAS  GANADO, SELECIONA UNA DE LAS 3 CARTAS\n");
             Carta *cartas3 = seleccionarTresCartasAleatorias(cartas_disponibles, deck_general);
             // Imprimir las cartas seleccionadas
