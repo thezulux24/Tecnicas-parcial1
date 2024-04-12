@@ -41,7 +41,6 @@ typedef struct Jugador {
     Personaje personaje;
     int energia;
     int defensa;
-    int seleccion;
     int termino;
 } Jugador;
 
@@ -72,11 +71,11 @@ Carta* seleccionarTresCartasAleatorias(Carta* cartas_disponibles, ListaEnlazada*
 Carta obtenerCartaEnIndice(ListaEnlazada* lista, int indice);
 void moverCartaAMiniDeck(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
 void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
-void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte);
+void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte,int seleccion);
 void inicializarCartasDisponibles(Carta* cartas_disponibles);
 
 int main() {
-    int jugar = 1; //booleano para jugar
+    int seleccion = 1;
     // Definir todas las cartas disponibles en el juego
     Carta cartas_disponibles[NUM_CARTAS];
     // Llamar a la función para inicializar las cartas disponibles
@@ -114,9 +113,9 @@ int main() {
     imprimirPila(pila_robo);
      */
 
-ListaEnlazada *pila_descarte = inicializarPila(NUM_CARTAS);
-ListaEnlazada *mano = crearListaEnlazada();
-robarCartas(pila_robo, mano);
+    ListaEnlazada *pila_descarte = inicializarPila(NUM_CARTAS);
+    ListaEnlazada *mano = crearListaEnlazada();
+    robarCartas(pila_robo, mano);
     /*
       printf("Mano:\n");
       imprimirListaCartas(mano);
@@ -125,15 +124,17 @@ robarCartas(pila_robo, mano);
       imprimirPila(pila_robo);
    */
    printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
+   while(seleccion){
+
 
    while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
        robarCartas(pila_robo, mano);
-       turno(enemigo, jugador, mano, pila_robo, pila_descarte);
+       turno(enemigo, jugador, mano, pila_robo, pila_descarte,seleccion);
        moverCartasAlFinalizarTurno(mano, pila_descarte);
         }
        if (jugador.personaje.vida_actual <= 0) {
            printf("HAS PERDIDO\n");
-           jugar = 0;
+           seleccion = 0;
        }
        else  {
            printf("HAS  GANADO, SELECIONA UNA DE LAS 3 CARTAS\n");
@@ -145,10 +146,10 @@ robarCartas(pila_robo, mano);
                       cartas3[i].ataque, cartas3[i].defensa,
                       cartas3[i].vida, cartas3[i].energia);
            }
-           jugar = 0;
+           seleccion = 0;
 
        }
-
+   }
       // Liberar memoria
       free(deck_general);
       free(pila_robo->cartas);
@@ -157,7 +158,8 @@ robarCartas(pila_robo, mano);
       return 0;
    }
 
-   void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte){
+
+   void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int seleccion){
        jugador.personaje.ataque=0;
        jugador.defensa=0;
        jugador.energia=3;
@@ -175,17 +177,17 @@ robarCartas(pila_robo, mano);
               imprimirPila(pila_robo);
               printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
            printf("\n ----------------- \n");
-           scanf("%d", &jugador.seleccion);
-           if (jugador.seleccion==0){
+           scanf("%d", &seleccion);
+           if (seleccion==0){
                jugador.termino = 0;
                printf("\n ----------------- \n");
                printf("turno finalizado\n");
            }
-           else if (jugador.seleccion!=0 && jugador.energia>0){
-               jugador.personaje.ataque += obtenerCartaEnIndice(mano, jugador.seleccion - 1).ataque;
-               jugador.defensa += obtenerCartaEnIndice(mano, jugador.seleccion - 1).defensa;
-               jugador.energia -= obtenerCartaEnIndice(mano, jugador.seleccion - 1).energia;
-               jugador.personaje.vida_actual += obtenerCartaEnIndice(mano, jugador.seleccion - 1).vida;
+           else if (seleccion!=0 && jugador.energia>0){
+               jugador.personaje.ataque += obtenerCartaEnIndice(mano, seleccion - 1).ataque;
+               jugador.defensa += obtenerCartaEnIndice(mano, seleccion - 1).defensa;
+               jugador.energia -= obtenerCartaEnIndice(mano, seleccion - 1).energia;
+               jugador.personaje.vida_actual += obtenerCartaEnIndice(mano, seleccion - 1).vida;
 
 
                moverCartaAMiniDeck(mano, pila_descarte);
