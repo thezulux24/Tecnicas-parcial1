@@ -70,7 +70,7 @@ Carta* seleccionarTresCartasAleatorias(Carta* cartas_disponibles, ListaEnlazada*
 Carta obtenerCartaEnIndice(ListaEnlazada* lista, int indice);
 void moverCartaAMiniDeck(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
 void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
-void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte,int seleccion);
+void turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int* seleccion);
 void inicializarCartasDisponibles(Carta* cartas_disponibles);
 void eliminarEspacios(char *str);
 int main() {
@@ -120,7 +120,7 @@ int main() {
     printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
     while (seleccion==1) {
         while (jugador.personaje.vida_actual > 0 && enemigo.personaje.vida_actual > 0) {
-            turno(enemigo, jugador, mano, pila_robo, pila_descarte, seleccion);
+            turno(&enemigo, &jugador, mano, pila_robo, pila_descarte, &seleccion);
             robarCartas(pila_robo, mano);
             moverCartasAlFinalizarTurno(mano, pila_descarte);
         }
@@ -150,46 +150,37 @@ int main() {
    }
 
 
-   void turno(struct Enemigo enemigo, struct Jugador jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int seleccion){
-           strcpy(enemigo.personaje.nombre, "Kratos"); // ya que no se puede declarar con "="
-           jugador.personaje.ataque=0;
-           jugador.defensa=0;
-           jugador.energia=3;
-           enemigo.personaje.ataque = rand() % 8 + 5;
-           eliminarEspacios(jugador.personaje.nombre);
-           printf("Hola %s, tu vida es %d/%d\n", jugador.personaje.nombre, jugador.personaje.vida_actual, jugador.personaje.vida_total);
-           printf("Su enemigo se llama %s, su vida es de %d/%d\n", enemigo.personaje.nombre, enemigo.personaje.vida_actual, enemigo.personaje.vida_total);
-           printf("-------------------------------------------------------------------- \n");
-           printf("Las cartas disponibles son: \n");
-           imprimirListaCartas(mano);
-           printf("por favor seleccione su carta, o escriba 0 para terminar finalizar turno\n");
-           printf("-------------------------------------------------------------------- \n");
-           scanf("%d", &seleccion);
-           if (seleccion==0){
-               printf("\n ----------------- \n");
-               printf("turno finalizado\n");
-           }
-           else if (seleccion!=0 && jugador.energia>0){
-               jugador.personaje.ataque += obtenerCartaEnIndice(mano, seleccion - 1).ataque;
-               jugador.defensa == obtenerCartaEnIndice(mano, seleccion - 1).defensa;
-               jugador.energia == obtenerCartaEnIndice(mano, seleccion - 1).energia;
-               jugador.personaje.vida_actual += obtenerCartaEnIndice(mano, seleccion - 1).vida;
-               moverCartaAMiniDeck(mano, pila_descarte);
-               if (enemigo.personaje.vida_actual > 0){
-                   printf("has generado %d dano a tu enemigo\n", jugador.personaje.ataque);
-                   enemigo.personaje.vida_actual -=jugador.personaje.ataque;
-               }
-           }
-           /*
-           if (enemigo.personaje.ataque > jugador.defensa){
-               jugador.personaje.vida_actual -= jugador.defensa + enemigo.personaje.ataque;
-               printf("el enemigo ha generado %d dano\n", enemigo.personaje.ataque - jugador.defensa);
-           }
-           */
-           else {
-               printf("ERROR\n");
-           }
-       }
+void turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int* seleccion) {
+    strcpy(enemigo->personaje.nombre, "Kratos"); // Ya que no se puede declarar con "="
+    jugador->personaje.ataque = 0;
+    jugador->defensa = 0;
+    jugador->energia = 3;
+    enemigo->personaje.ataque = rand() % 8 + 5;
+    eliminarEspacios(jugador->personaje.nombre);
+    printf("Hola %s, tu vida es %d/%d\n", jugador->personaje.nombre, jugador->personaje.vida_actual, jugador->personaje.vida_total);
+    printf("Su enemigo se llama %s, su vida es de %d/%d\n", enemigo->personaje.nombre, enemigo->personaje.vida_actual, enemigo->personaje.vida_total);
+    printf("-------------------------------------------------------------------- \n");
+    printf("Las cartas disponibles son: \n");
+    imprimirListaCartas(mano);
+    printf("Por favor selecciona tu carta, debes marcar el número de la carta o escribir 0 para finalizar el turno\n");
+    printf("-------------------------------------------------------------------- \n");
+    scanf("%d", seleccion);
+    if (*seleccion == 0) {
+        printf("\n ----------------- \n");
+        printf("Turno finalizado\n");
+    } else if (*seleccion != 0 && jugador->energia > 0) {
+        jugador->personaje.ataque += obtenerCartaEnIndice(mano, *seleccion - 1).ataque;
+        jugador->defensa += obtenerCartaEnIndice(mano, *seleccion - 1).defensa;
+        jugador->energia -= obtenerCartaEnIndice(mano, *seleccion - 1).energia;
+        jugador->personaje.vida_actual += obtenerCartaEnIndice(mano, *seleccion - 1).vida;
+        if (enemigo->personaje.vida_actual > 0) {
+            printf("Has generado %d de daño a tu enemigo\n", jugador->personaje.ataque);
+            enemigo->personaje.vida_actual -= jugador->personaje.ataque;
+        }
+    } else {
+        printf("ERROR\n");
+    }
+}
 
 
    // Función para crear un nodo de la lista enlazada
