@@ -169,13 +169,12 @@ int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano,
     int flag = 1;
     strcpy(enemigo->personaje.nombre, "Kratos"); // Ya que no se puede declarar con "="
     jugador->personaje.ataque = 0;
-
     eliminarEspacios(jugador->personaje.nombre);
     printf("Hola %s, tu vida es %d/%d\n", jugador->personaje.nombre, jugador->personaje.vida_actual, jugador->personaje.vida_total);
     printf("su energia es: %d\n", jugador->energia);
     printf("su defensa es: %d\n", jugador->defensa);
     printf("Su enemigo se llama %s, su vida es de %d/%d\n", enemigo->personaje.nombre, enemigo->personaje.vida_actual, enemigo->personaje.vida_total);
-    printf("Su enemigo le hara %d dan0\n", enemigo->personaje.ataque);
+    printf("Su enemigo le hara %d dano\n", enemigo->personaje.ataque);
     printf("-------------------------------------------------------------------- \n");
     printf("Las cartas disponibles son: \n");
     imprimirListaCartas(mano);
@@ -196,11 +195,14 @@ int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano,
         }
 
         flag = 0;
-    } else if (seleccion > mano->longitud) { // Comprobar si el número de selección excede el tamaño de la mano
+    }
+    else if (seleccion > mano->longitud) { // Comprobar si el número de selección excede el tamaño de la mano
         printf("La carta no está en el mazo.\n");
-    } else if (jugador->energia < -(obtenerCartaEnIndice(mano, seleccion - 1).energia)) { // Comprobar si hay suficiente energía
+    }
+    else if (jugador->energia < -(obtenerCartaEnIndice(mano, seleccion - 1).energia)) { // Comprobar si hay suficiente energía
         printf("Energía insuficiente.\n");
-    } else if (seleccion != 0 && jugador->energia > 0) {
+    }
+    else if ((jugador->energia -(obtenerCartaEnIndice(mano, seleccion - 1).energia)) >= 0) {
         Carta cartaSeleccionada = obtenerCartaEnIndice(mano, seleccion - 1);
         jugador->personaje.ataque += cartaSeleccionada.ataque;
         jugador->defensa += cartaSeleccionada.defensa;
