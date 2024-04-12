@@ -69,13 +69,13 @@ void imprimirPila(Pila* pila);
 Carta* seleccionarTresCartasAleatorias(Carta* cartas_disponibles, ListaEnlazada* deck_general);
 Carta obtenerCartaEnIndice(ListaEnlazada* lista, int indice);
 void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte);
-int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int* seleccion);
+int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte);
 void inicializarCartasDisponibles(Carta* cartas_disponibles);
 void eliminarEspacios(char *str);
 void eliminarCartaLista(ListaEnlazada* lista, int indice);
 
 int main() {
-    int seleccion = 1;
+    int flagJuego = 1;
     int flagTurno = 1;
     // Definir todas las cartas disponibles en el juego
     Carta cartas_disponibles[NUM_CARTAS];
@@ -122,19 +122,24 @@ int main() {
       imprimirPila(pila_robo);
    */
     printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
-    while (seleccion==1) {
+    while (flagJuego == 1) {
         jugador.defensa = 0;
         jugador.energia = 3;
+        enemigo.personaje.ataque = rand() % 8 + 5;
         while (flagTurno == 1) {
-            flagTurno = turno(&enemigo, &jugador, mano, pila_robo, pila_descarte, &seleccion);
-
-
+            flagTurno = turno(&enemigo, &jugador, mano, pila_robo, pila_descarte);
 
         }
+        flagTurno = 1;
+
+        //barajarListaYApilar(pila_descarte, pila_robo);
+        //robarCartas(pila_robo, mano);
+
         if (jugador.personaje.vida_actual <= 0) {
             printf("HAS PERDIDO\n");
-            seleccion = 0;
-        } else {
+            flagJuego = 0;
+        }
+        if (enemigo.personaje.vida_actual <= 0){
             printf("HAS  GANADO, SELECIONA UNA DE LAS 3 CARTAS\n");
             Carta *cartas3 = seleccionarTresCartasAleatorias(cartas_disponibles, deck_general);
             // Imprimir las cartas seleccionadas
@@ -144,7 +149,7 @@ int main() {
                        cartas3[i].ataque, cartas3[i].defensa,
                        cartas3[i].vida, cartas3[i].energia);
             }
-            seleccion = 0;
+            flagJuego = 0;
 
         }
     }
@@ -157,34 +162,46 @@ int main() {
    }
 
 
-int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int* seleccion) {
+int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte) {
+    int seleccion;
     printf("imprimiendo descarte\n");
     imprimirListaCartas(pila_descarte);
     int flag = 1;
     strcpy(enemigo->personaje.nombre, "Kratos"); // Ya que no se puede declarar con "="
     jugador->personaje.ataque = 0;
-    enemigo->personaje.ataque = rand() % 8 + 5;
+
     eliminarEspacios(jugador->personaje.nombre);
     printf("Hola %s, tu vida es %d/%d\n", jugador->personaje.nombre, jugador->personaje.vida_actual, jugador->personaje.vida_total);
     printf("su energia es: %d\n", jugador->energia);
     printf("su defensa es: %d\n", jugador->defensa);
     printf("Su enemigo se llama %s, su vida es de %d/%d\n", enemigo->personaje.nombre, enemigo->personaje.vida_actual, enemigo->personaje.vida_total);
+    printf("Su enemigo le hara %d dan0\n", enemigo->personaje.ataque);
     printf("-------------------------------------------------------------------- \n");
     printf("Las cartas disponibles son: \n");
     imprimirListaCartas(mano);
     printf("Por favor selecciona tu carta, debes marcar el número de la carta o escribir 0 para finalizar el turno\n");
     printf("-------------------------------------------------------------------- \n");
-    scanf("%d", seleccion);
-    if (*seleccion == 0) {
+    scanf("%d", &seleccion);
+    if (seleccion == 0) {
         printf("\n ----------------- \n");
         printf("Turno finalizado\n");
+
+
+        if (jugador->defensa < enemigo->personaje.ataque){
+            printf("Su enemigo le generó %d dano\n", -(jugador->defensa-enemigo->personaje.ataque));
+            jugador->personaje.vida_actual += jugador->defensa-enemigo->personaje.ataque;
+        }
+        else {
+            printf("su enemigo no le genero dano\n");
+        }
+
         flag = 0;
-    } else if (*seleccion > mano->longitud) { // Comprobar si el número de selección excede el tamaño de la mano
+    } else if (seleccion > mano->longitud) { // Comprobar si el número de selección excede el tamaño de la mano
         printf("La carta no está en el mazo.\n");
-    } else if (jugador->energia < -(obtenerCartaEnIndice(mano, *seleccion - 1).energia)) { // Comprobar si hay suficiente energía
+    } else if (jugador->energia < -(obtenerCartaEnIndice(mano, seleccion - 1).energia)) { // Comprobar si hay suficiente energía
         printf("Energía insuficiente.\n");
-    } else if (*seleccion != 0 && jugador->energia > 0) {
-        Carta cartaSeleccionada = obtenerCartaEnIndice(mano, *seleccion - 1);
+    } else if (seleccion != 0 && jugador->energia > 0) {
+        Carta cartaSeleccionada = obtenerCartaEnIndice(mano, seleccion - 1);
         jugador->personaje.ataque += cartaSeleccionada.ataque;
         jugador->defensa += cartaSeleccionada.defensa;
         jugador->energia += cartaSeleccionada.energia;
@@ -195,7 +212,7 @@ int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano,
         }
         // Agregar la carta usada a la pila de descarte y eliminarla de la mano
         agregarAlFinal(pila_descarte, cartaSeleccionada);
-        eliminarCartaLista(mano, *seleccion - 1);
+        eliminarCartaLista(mano, seleccion - 1);
     } else {
         printf("ERROR\n");
     }
