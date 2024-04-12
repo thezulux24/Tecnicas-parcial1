@@ -64,7 +64,8 @@ Carta desapilar(Pila* pila);
 void barajarListaYApilar(ListaEnlazada* lista, Pila* pila_robo);
 void seleccionarCartasDeck (Carta* cartas_disponibles, ListaEnlazada* deck_general, int num_cartas_inicial);
 void imprimirListaCartas(ListaEnlazada* lista);
-void robarCartas(Pila* pila_robo, ListaEnlazada* mano);
+void robarCartas(Pila* pila_robo, ListaEnlazada* mano,ListaEnlazada* pila_descarte);
+void robarCartas2(Pila* pila_robo, ListaEnlazada* mano);
 void imprimirPila(Pila* pila);
 Carta* seleccionarTresCartasAleatorias(Carta* cartas_disponibles, ListaEnlazada* deck_general);
 Carta obtenerCartaEnIndice(ListaEnlazada* lista, int indice);
@@ -73,7 +74,7 @@ int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano,
 void inicializarCartasDisponibles(Carta* cartas_disponibles);
 void eliminarEspacios(char *str);
 void eliminarCartaLista(ListaEnlazada* lista, int indice);
-
+void robarUnaCarta(Pila* pila_robo, ListaEnlazada* mano, ListaEnlazada* pila_descarte);
 int main() {
     int flagJuego = 1;
     int flagTurno = 1;
@@ -113,7 +114,7 @@ int main() {
      */
     ListaEnlazada *pila_descarte = crearListaEnlazada();
     ListaEnlazada *mano = crearListaEnlazada();
-    robarCartas(pila_robo, mano);
+    robarCartas2(pila_robo,mano);
     /*
       printf("Mano:\n");
       imprimirListaCartas(mano);
@@ -129,8 +130,9 @@ int main() {
         while (flagTurno == 1) {
             flagTurno = turno(&enemigo, &jugador, mano, pila_robo, pila_descarte);
         }
-        //barajarListaYApilar(pila_descarte, pila_robo);
-        //robarCartas(pila_robo, mano);
+        moverCartasAlFinalizarTurno(mano,pila_descarte);
+        robarCartas(pila_robo,mano,pila_descarte);
+        robarCartas2(pila_robo,mano);
 
         if (jugador.personaje.vida_actual <= 0) {
             printf("HAS PERDIDO\n");
@@ -149,6 +151,7 @@ int main() {
             flagJuego = 0;
 
         }
+        flagTurno = 1;
     }
       // Liberar memoria
       free(deck_general);
@@ -190,7 +193,6 @@ int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano,
         else {
             printf("su enemigo no le genero dano\n");
         }
-
         flag = 0;
     }
     else if (seleccion > mano->longitud) { // Comprobar si el número de selección excede el tamaño de la mano
@@ -357,23 +359,68 @@ void imprimirListaCartas(ListaEnlazada* lista) {
       }
    }
 
-   void robarCartas(Pila* pila_robo, ListaEnlazada* mano) {
-      // Vaciar la mano actual (limpiar la lista enlazada)
-      while (mano->cabeza != NULL) {
-          Nodo* temp = mano->cabeza;
-          mano->cabeza = mano->cabeza->siguiente;
-          free(temp);
-      }
-      mano->longitud = 0;
+void robarCartas2(Pila* pila_robo, ListaEnlazada* mano) {
+    // Vaciar la mano actual (limpiar la lista enlazada)
+    while (mano->cabeza != NULL) {
+        Nodo* temp = mano->cabeza;
+        mano->cabeza = mano->cabeza->siguiente;
+        free(temp);
+    }
+    mano->longitud = 0;
 
-      // Desapilar cartas de la pila de robo y agregarlas a la mano hasta que tenga 5 cartas
-      while (mano->longitud < 5 && pila_robo->tope >= 0) {
-          Carta carta = desapilar(pila_robo);
-          agregarAlFinal(mano, carta);
-      }
-   }
+    // Desapilar cartas de la pila de robo y agregarlas a la mano hasta que tenga 5 cartas
+    while (mano->longitud < 5 && pila_robo->tope >= 0) {
+        Carta carta = desapilar(pila_robo);
+        agregarAlFinal(mano, carta);
+    }
+}
 
+void robarCartas(Pila* pila_robo, ListaEnlazada* mano, ListaEnlazada* pila_descarte) {
+    // Si la pila de robo está vacía, mezclar la pila de descarte y colocarlas en la pila de robo
+    if (pila_robo->tope == 0) {
+        // Mezclar la pila de descarte y colocarla en la pila de robo
+        barajarListaYApilar(pila_descarte, pila_robo);
+    }
+    // Vaciar la mano actual (limpiar la lista enlazada)
+    while (mano->cabeza != NULL) {
+        Nodo* temp = mano->cabeza;
+        mano->cabeza = mano->cabeza->siguiente;
+        free(temp);
+    }
+    mano->longitud = 0;
 
+    // Desapilar cartas de la pila de robo y agregarlas a la mano hasta que tenga 5 cartas
+    while (mano->longitud < MANO_JUGADOR && pila_robo->tope >= 0) {
+        Carta carta = desapilar(pila_robo);
+        agregarAlFinal(mano, carta);
+    }
+
+    // Al finalizar el turno del jugador, mover todas las cartas del mini deck a la pila de descarte
+    moverCartasAlFinalizarTurno(mano, pila_descarte);
+
+    // Si la pila de robo se queda sin cartas después de robar, mezclar la pila de descarte y colocarlas en la pila de robo
+    if (pila_robo->tope < 0) {
+        // Mezclar la pila de descarte y colocarla en la pila de robo
+        barajarListaYApilar(pila_descarte, pila_robo);
+    }
+}
+
+void robarUnaCarta(Pila* pila_robo, ListaEnlazada* mano, ListaEnlazada* pila_descarte) {
+    // Si la mano está llena, no robar más cartas
+    if (mano->longitud == MANO_JUGADOR) {
+        return;
+    }
+    // Si la pila de robo está vacía, mezclar la pila de descarte y volver a llenar la pila de robo
+    if (pila_robo->tope == 0) {
+        // Mezclar la pila de descarte y colocarla en la pila de robo
+        barajarListaYApilar(pila_descarte, pila_robo);
+    }
+    // Desapilar una carta de la pila de robo y agregarla a la mano
+    else if (pila_robo->tope > 0) {
+        Carta carta = desapilar(pila_robo);
+        agregarAlFinal(mano, carta);
+    }
+}
 
    void imprimirPila(Pila* pila) {
       if (pila->tope == -1) {
@@ -457,21 +504,16 @@ void imprimirListaCartas(ListaEnlazada* lista) {
 
 
    // Función para mover todas las cartas del mini deck a la pila de descarte al finalizar el turno del jugador
-   void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_descarte) {
-      // Verificar si el mini deck no está vacío
-      while (mini_deck->longitud > 0) {
-          // Obtener la primera carta del mini deck
-          Carta carta = mini_deck->cabeza->carta;
-
-          // Agregar la carta a la pila de descarte
-          agregarAlFinal(pila_descarte, carta);
-
-          // Eliminar la carta del mini deck
-          Nodo* temp = mini_deck->cabeza;
-          mini_deck->cabeza = mini_deck->cabeza->siguiente;
-          free(temp);
-          mini_deck->longitud--;
-      }
+   void moverCartasAlFinalizarTurno(ListaEnlazada* mano, ListaEnlazada* pila_descarte) {
+       // Mover todas las cartas de la mano a la pila de descarte
+       while (mano->cabeza != NULL) {
+           Carta carta = mano->cabeza->carta;
+           agregarAlFinal(pila_descarte, carta); // Agregar la carta a la pila de descarte
+           Nodo* temp = mano->cabeza;
+           mano->cabeza = mano->cabeza->siguiente;
+           free(temp); // Liberar la memoria del nodo de la mano
+       }
+       mano->longitud = 0; // Reiniciar la longitud de la mano
    }
    void inicializarCartasDisponibles(Carta* cartas_disponibles) {
    cartas_disponibles[0] = (Carta){"Ataque", 5, 0, 0, -1};
@@ -499,7 +541,6 @@ void eliminarEspacios(char *str) {
 
 void eliminarCartaLista(ListaEnlazada* lista, int indice) {
     int eliminado = 0; // Variable flag para indicar si se eliminó la carta
-
     if (lista != NULL && lista->cabeza != NULL && indice >= 0) {
         Nodo* actual = lista->cabeza;
         Nodo* anterior = NULL;
@@ -525,6 +566,7 @@ void eliminarCartaLista(ListaEnlazada* lista, int indice) {
             }
 
             free(actual);
+            lista->longitud--;
         }
     }
 }
