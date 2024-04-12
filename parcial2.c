@@ -72,6 +72,8 @@ void moverCartasAlFinalizarTurno(ListaEnlazada* mini_deck, ListaEnlazada* pila_d
 int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int* seleccion);
 void inicializarCartasDisponibles(Carta* cartas_disponibles);
 void eliminarEspacios(char *str);
+void eliminarCartaLista(ListaEnlazada* lista, int indice);
+
 int main() {
     int seleccion = 1;
     int flagTurno = 1;
@@ -108,7 +110,7 @@ int main() {
     printf("Pila de robado:\n");
     imprimirPila(pila_robo);
      */
-    ListaEnlazada *pila_descarte = inicializarPila(NUM_CARTAS);
+    ListaEnlazada *pila_descarte = crearListaEnlazada();
     ListaEnlazada *mano = crearListaEnlazada();
     robarCartas(pila_robo, mano);
     /*
@@ -152,7 +154,9 @@ int main() {
    }
 
 
-int  turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int* seleccion) {
+int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano, Pila* pila_robo, ListaEnlazada* pila_descarte, int* seleccion) {
+    printf("imprimiendo descarte\n");
+    imprimirListaCartas(pila_descarte);
     int flag = 1;
     strcpy(enemigo->personaje.nombre, "Kratos"); // Ya que no se puede declarar con "="
     jugador->personaje.ataque = 0;
@@ -173,14 +177,18 @@ int  turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano
         printf("Turno finalizado\n");
         flag = 0;
     } else if (*seleccion != 0 && jugador->energia > 0) {
-        jugador->personaje.ataque += obtenerCartaEnIndice(mano, *seleccion - 1).ataque;
-        jugador->defensa += obtenerCartaEnIndice(mano, *seleccion - 1).defensa;
-        jugador->energia -= obtenerCartaEnIndice(mano, *seleccion - 1).energia;
-        jugador->personaje.vida_actual += obtenerCartaEnIndice(mano, *seleccion - 1).vida;
+        Carta cartaSeleccionada = obtenerCartaEnIndice(mano, *seleccion - 1);
+        jugador->personaje.ataque += cartaSeleccionada.ataque;
+        jugador->defensa += cartaSeleccionada.defensa;
+        jugador->energia -= cartaSeleccionada.energia;
+        jugador->personaje.vida_actual += cartaSeleccionada.vida;
         if (enemigo->personaje.vida_actual > 0) {
             printf("Has generado %d de daño a tu enemigo\n", jugador->personaje.ataque);
             enemigo->personaje.vida_actual -= jugador->personaje.ataque;
         }
+        // Agregar la carta usada a la pila de descarte y eliminarla de la mano
+        agregarAlFinal(pila_descarte, cartaSeleccionada);
+        eliminarCartaLista(mano, *seleccion - 1);
     } else {
         printf("ERROR\n");
     }
@@ -463,5 +471,37 @@ void eliminarEspacios(char *str) {
     while (len > 0 && (str[len - 1] == ' ' || str[len - 1] == '\n' || str[len - 1] == '\r')) {
         str[len - 1] = '\0';
         len--;
+    }
+}
+
+void eliminarCartaLista(ListaEnlazada* lista, int indice) {
+    int eliminado = 0; // Variable flag para indicar si se eliminó la carta
+
+    if (lista != NULL && lista->cabeza != NULL && indice >= 0) {
+        Nodo* actual = lista->cabeza;
+        Nodo* anterior = NULL;
+
+        int indiceActual = 0;
+
+        // Recorrer la lista hasta encontrar el nodo correspondiente al índice
+        while (actual != NULL && indiceActual < indice) {
+            anterior = actual;
+            actual = actual->siguiente;
+            indiceActual++;
+        }
+
+        // Actualizar los punteros de los nodos adyacentes y liberar la memoria ocupada por el nodo eliminado
+        if (actual != NULL) {
+            eliminado = 1; // Se ha eliminado la carta
+
+            if (anterior == NULL) {
+                // Si el nodo a eliminar es el primero
+                lista->cabeza = actual->siguiente;
+            } else {
+                anterior->siguiente = actual->siguiente;
+            }
+
+            free(actual);
+        }
     }
 }
