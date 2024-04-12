@@ -88,6 +88,7 @@ int main() {
     jugador.personaje.vida_total = 50;
     enemigo.personaje.vida_actual = 100;
     enemigo.personaje.vida_total = 100;
+
     // Definir nombre del jugador
     printf("Ingresa el nombre del jugador: ");
     fgets(jugador.personaje.nombre, sizeof(jugador.personaje.nombre), stdin);
@@ -122,6 +123,8 @@ int main() {
    */
     printf("Recuerde que, AT=Ataque, DF=Defensa,LF= Efecto en vida  y EN=Costo de energia \n");
     while (seleccion==1) {
+        jugador.defensa = 0;
+        jugador.energia = 3;
         while (flagTurno == 1) {
             flagTurno = turno(&enemigo, &jugador, mano, pila_robo, pila_descarte, &seleccion);
 
@@ -160,11 +163,11 @@ int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano,
     int flag = 1;
     strcpy(enemigo->personaje.nombre, "Kratos"); // Ya que no se puede declarar con "="
     jugador->personaje.ataque = 0;
-    jugador->defensa = 0;
-    jugador->energia = 3;
     enemigo->personaje.ataque = rand() % 8 + 5;
     eliminarEspacios(jugador->personaje.nombre);
     printf("Hola %s, tu vida es %d/%d\n", jugador->personaje.nombre, jugador->personaje.vida_actual, jugador->personaje.vida_total);
+    printf("su energia es: %d\n", jugador->energia);
+    printf("su defensa es: %d\n", jugador->defensa);
     printf("Su enemigo se llama %s, su vida es de %d/%d\n", enemigo->personaje.nombre, enemigo->personaje.vida_actual, enemigo->personaje.vida_total);
     printf("-------------------------------------------------------------------- \n");
     printf("Las cartas disponibles son: \n");
@@ -176,11 +179,15 @@ int turno(struct Enemigo* enemigo, struct Jugador* jugador, ListaEnlazada* mano,
         printf("\n ----------------- \n");
         printf("Turno finalizado\n");
         flag = 0;
+    } else if (*seleccion > mano->longitud) { // Comprobar si el número de selección excede el tamaño de la mano
+        printf("La carta no está en el mazo.\n");
+    } else if (jugador->energia < -(obtenerCartaEnIndice(mano, *seleccion - 1).energia)) { // Comprobar si hay suficiente energía
+        printf("Energía insuficiente.\n");
     } else if (*seleccion != 0 && jugador->energia > 0) {
         Carta cartaSeleccionada = obtenerCartaEnIndice(mano, *seleccion - 1);
         jugador->personaje.ataque += cartaSeleccionada.ataque;
         jugador->defensa += cartaSeleccionada.defensa;
-        jugador->energia -= cartaSeleccionada.energia;
+        jugador->energia += cartaSeleccionada.energia;
         jugador->personaje.vida_actual += cartaSeleccionada.vida;
         if (enemigo->personaje.vida_actual > 0) {
             printf("Has generado %d de daño a tu enemigo\n", jugador->personaje.ataque);
